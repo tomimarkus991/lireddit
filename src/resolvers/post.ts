@@ -32,9 +32,10 @@ export class PostResolver {
     @Ctx() { em }: MyContext
   ): Promise<Post | null> {
     const post = await em.findOne(Post, { id });
+    console.log(title);
     if (!post) {
       return null;
-    } else if (typeof title !== "undefined") {
+    } else if (typeof title !== "undefined" && title !== "") {
       post.title = title;
       await em.persistAndFlush(post);
     }

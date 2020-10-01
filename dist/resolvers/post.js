@@ -41,10 +41,11 @@ let PostResolver = class PostResolver {
     updatePost(id, title, { em }) {
         return __awaiter(this, void 0, void 0, function* () {
             const post = yield em.findOne(Post_1.Post, { id });
+            console.log(title);
             if (!post) {
                 return null;
             }
-            else if (typeof title !== "undefined") {
+            else if (typeof title !== "undefined" && title !== "") {
                 post.title = title;
                 yield em.persistAndFlush(post);
             }
