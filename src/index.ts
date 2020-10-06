@@ -13,6 +13,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { __prod__ } from "./constants";
 import { MyContext } from "./types";
+import { Session } from "inspector";
 
 const main = async () => {
   const orm = await MikroORM.init(microConfig); // conntect to db
@@ -53,7 +54,7 @@ const main = async () => {
 
   apolloServer.applyMiddleware({ app });
 
-  app.listen(3000, () => console.log("server started on loclahost:3000"));
+  app.listen(5000, () => console.log("server started on loclahost:5000"));
 };
 
 main().catch((err) => console.error(err));

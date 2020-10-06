@@ -37,6 +37,7 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  // Me
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext) {
     // you are not logged in
@@ -47,6 +48,7 @@ export class UserResolver {
 
     return user;
   }
+  // Register
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernameAndPasswordInput,
@@ -94,7 +96,7 @@ export class UserResolver {
 
     return { user };
   }
-
+  // Login
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UsernameAndPasswordInput,
