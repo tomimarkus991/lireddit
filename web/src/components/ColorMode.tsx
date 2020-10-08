@@ -1,4 +1,4 @@
-import { Button, Icon, IconButton, useColorMode } from "@chakra-ui/core";
+import { IconButton, useColorMode } from "@chakra-ui/core";
 import React from "react";
 
 interface ColorModeProps {}
