@@ -1,0 +1,4 @@
+fragment LoginRegisterErrors on FieldError {
+  field
+  message
+}

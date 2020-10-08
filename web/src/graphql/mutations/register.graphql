@@ -1,12 +1,10 @@
 mutation Register($options: UsernameAndPasswordInput!) {
   register(options: $options) {
     errors {
-      field
-      message
+      ...LoginRegisterErrors
     }
     user {
-      id
-      username
+      ...RegularUser
     }
   }
 }

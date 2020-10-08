@@ -25,30 +25,37 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           <Link mr={2}>Login</Link>
         </NextLink>
         <NextLink href="register">
-          <Link>Register</Link>
+          <Link mr={4}>Register</Link>
         </NextLink>
+        <ColorMode />
       </Box>
     );
   }
   // user logged in
   else {
+    console.log(data.me.username);
+
     body = (
-      <Box mr="auto">
-        <Flex>
-          <Text color={color[colorMode]} mr={2}>
-            {data.me.username}
-          </Text>
-          <Button color={color[colorMode]} variant="link">
+      <>
+        <Box mr="auto">
+          <Flex>
+            <Text color={color[colorMode]} mr={2}>
+              {data.me.username}
+            </Text>
+          </Flex>
+        </Box>
+        <Box ml="auto">
+          <Button mr={4} color={color[colorMode]} variant="link">
             Logout
           </Button>
-        </Flex>
-      </Box>
+          <ColorMode />
+        </Box>
+      </>
     );
   }
   return (
     <Flex bg={bgColor[colorMode]} p={3} align="center">
       {body}
-      <ColorMode />
     </Flex>
   );
 };
