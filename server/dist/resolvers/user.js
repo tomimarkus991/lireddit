@@ -46,6 +46,10 @@ let FieldError = class FieldError {
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
+], FieldError.prototype, "field", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
 ], FieldError.prototype, "message", void 0);
 FieldError = __decorate([
     type_graphql_1.ObjectType()
@@ -79,6 +83,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
+                            field: "username",
                             message: "Username length has to be greater than 2",
                         },
                     ],
@@ -88,23 +93,37 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
+                            field: "password",
                             message: "Password length has to be greater than 6",
                         },
                     ],
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, {
-                username: options.username,
-                password: hashedPassword,
-            });
+            let user;
             try {
-                yield em.persistAndFlush(user);
+                const result = yield em
+                    .createQueryBuilder(User_1.User)
+                    .getKnexQuery()
+                    .insert({
+                    username: options.username,
+                    password: hashedPassword,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                    .returning("*");
+                user = result[0];
             }
             catch (error) {
+                console.log(error);
                 if (error.code === "23505") {
                     return {
-                        errors: [{ message: "User already exists" }],
+                        errors: [
+                            {
+                                field: "username",
+                                message: "Username already taken",
+                            },
+                        ],
                     };
                 }
             }
@@ -119,6 +138,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
+                            field: "password",
                             message: "username or password incorrect",
                         },
                     ],
@@ -129,6 +149,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
+                            field: "password",
                             message: "username or password incorrect",
                         },
                     ],
