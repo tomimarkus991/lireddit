@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Button, Flex, Link, Text, useColorMode } from "@chakra-ui/core";
 import NextLink from "next/link";
-import { useMeQuery } from "../generated/graphql";
+import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import ColorMode from "./ColorMode";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   const [{ data, fetching }] = useMeQuery();
   const { colorMode } = useColorMode();
   const bgColor = { light: "#F7FAFC", dark: "#2D3748" };
@@ -31,7 +32,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       </Box>
     );
   }
-  // user logged in
+  // user is logged in
   else {
     console.log(data.me.username);
 
@@ -45,7 +46,13 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           </Flex>
         </Box>
         <Box ml="auto">
-          <Button mr={4} color={color[colorMode]} variant="link">
+          <Button
+            onClick={() => logout()}
+            isLoading={logoutFetching}
+            mr={4}
+            color={color[colorMode]}
+            variant="link"
+          >
             Logout
           </Button>
           <ColorMode />
