@@ -3,12 +3,13 @@ import { Box, Button, Flex, Link, Text, useColorMode } from "@chakra-ui/core";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import ColorMode from "./ColorMode";
+import { isServer } from "../utils/isServer";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({ pause: isServer() });
   const { colorMode } = useColorMode();
   const bgColor = { light: "#F7FAFC", dark: "#2D3748" };
   const color = { light: "#242526", dark: "#E4E6EB" };
@@ -34,8 +35,6 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
   // user is logged in
   else {
-    console.log(data.me.username);
-
     body = (
       <>
         <Box mr="auto">
