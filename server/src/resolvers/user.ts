@@ -4,7 +4,6 @@ import {
   Arg,
   Ctx,
   Field,
-  InputType,
   Mutation,
   ObjectType,
   Query,
@@ -13,14 +12,8 @@ import {
 import argon2 from "argon2";
 import { EntityManager } from "@mikro-orm/postgresql";
 import { COOKIE_NAME } from "../constants";
-
-@InputType()
-class UsernameAndPasswordInput {
-  @Field()
-  username: string;
-  @Field()
-  password: string;
-}
+import { UsernameAndPasswordInput } from "./UsernameAndPasswordInput";
+import { validateRegister } from "../utils/validateRegister";
 
 @ObjectType()
 class FieldError {
@@ -41,6 +34,11 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => Boolean)
+  async forgotPassword(@Arg("email") email: string, @Ctx() { em }: MyContext) {
+    // const user = await em.findOne(User, {email});
+    return true;
+  }
   // Me
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext) {
@@ -58,26 +56,9 @@ export class UserResolver {
     @Arg("options") options: UsernameAndPasswordInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    if (options.username.length <= 2) {
-      return {
-        errors: [
-          {
-            field: "username",
-            message: "Username length has to be greater than 2",
-          },
-        ],
-      };
-    }
-
-    if (options.password.length <= 6) {
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "Password length has to be greater than 6",
-          },
-        ],
-      };
+    const errors = validateRegister(options);
+    if (errors) {
+      return { errors };
     }
 
     const hashedPassword = await argon2.hash(options.password);
@@ -88,6 +69,7 @@ export class UserResolver {
         .getKnexQuery()
         .insert({
           username: options.username,
+          email: options.email,
           password: hashedPassword,
           created_at: new Date(),
           updated_at: new Date(),
@@ -118,21 +100,27 @@ export class UserResolver {
   // Login
   @Mutation(() => UserResponse)
   async login(
-    @Arg("options") options: UsernameAndPasswordInput,
+    @Arg("usernameOrEmail") UsernameOrEmail: string,
+    @Arg("password") password: string,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { username: options.username });
+    const user = await em.findOne(
+      User,
+      UsernameOrEmail.includes("@")
+        ? { email: UsernameOrEmail }
+        : { username: UsernameOrEmail }
+    );
     if (!user) {
       return {
         errors: [
           {
-            field: "password",
-            message: "username or password incorrect",
+            field: "usernameOrEmail",
+            message: "that username or email doesn't exist",
           },
         ],
       };
     }
-    const valid = await argon2.verify(user.password, options.password);
+    const valid = await argon2.verify(user.password, password);
     if (!valid) {
       return {
         errors: [
