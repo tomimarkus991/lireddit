@@ -33,6 +33,7 @@ const UsernameAndPasswordInput_1 = require("./UsernameAndPasswordInput");
 const validateRegister_1 = require("../utils/validateRegister");
 const sendEmail_1 = require("../utils/sendEmail");
 const uuid_1 = require("uuid");
+const typeorm_1 = require("typeorm");
 let FieldError = class FieldError {
 };
 __decorate([
@@ -60,7 +61,7 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UserResolver = class UserResolver {
-    changePassword(token, newPassword, { redis, req }) {
+    changePassword(token, newPassword, { req, redis }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (newPassword.length <= 6) {
                 return {
@@ -73,8 +74,8 @@ let UserResolver = class UserResolver {
                 };
             }
             const key = constants_1.FORGET_PASSWORD_PREFIX + token;
-            const userId = yield redis.get(key);
-            if (!userId) {
+            const userID = yield redis.get(key);
+            if (!userID) {
                 return {
                     errors: [
                         {
@@ -84,8 +85,8 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            const userIdNum = parseInt(userId);
-            const user = yield User_1.User.findOne(userIdNum);
+            const userIDNum = parseInt(userID);
+            const user = yield User_1.User.findOne({ where: { userIDNum } });
             if (!user) {
                 return {
                     errors: [
@@ -97,9 +98,9 @@ let UserResolver = class UserResolver {
                 };
             }
             const newHashedPassword = yield argon2_1.default.hash(newPassword);
-            yield User_1.User.update({ id: userIdNum }, { password: newHashedPassword });
+            yield User_1.User.update({ id: userIDNum }, { password: newHashedPassword });
             redis.del(key);
-            req.session.userId = user.id;
+            req.session.userID = user.id;
             return { user };
         });
     }
@@ -117,10 +118,11 @@ let UserResolver = class UserResolver {
         });
     }
     me({ req }) {
-        if (!req.session.userId) {
+        console.log(req.session);
+        if (!req.session.userID) {
             return null;
         }
-        return User_1.User.findOne(req.session.userId);
+        return User_1.User.findOne(req.session.userID);
     }
     register(options, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -131,11 +133,18 @@ let UserResolver = class UserResolver {
             const hashedPassword = yield argon2_1.default.hash(options.password);
             let user;
             try {
-                user = yield User_1.User.create({
+                const result = yield typeorm_1.getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into(User_1.User)
+                    .values({
                     username: options.username,
                     email: options.email,
                     password: hashedPassword,
-                }).save();
+                })
+                    .returning("*")
+                    .execute();
+                user = result.raw[0];
             }
             catch (error) {
                 if (error.code === "23505") {
@@ -161,7 +170,7 @@ let UserResolver = class UserResolver {
                     }
                 }
             }
-            req.session.userId = user === null || user === void 0 ? void 0 : user.id;
+            req.session.userID = user.id;
             return { user };
         });
     }
@@ -191,7 +200,7 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            req.session.userId = user.id;
+            req.session.userID = user.id;
             return { user };
         });
     }

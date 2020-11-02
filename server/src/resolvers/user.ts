@@ -15,7 +15,7 @@ import { UsernameAndPasswordInput } from "./UsernameAndPasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
-// import { getConnection } from "typeorm";
+import { getConnection } from "typeorm";
 
 @ObjectType()
 class FieldError {
@@ -40,7 +40,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { redis, req }: MyContext
+    @Ctx() { req, redis }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 6) {
       return {
@@ -54,9 +54,9 @@ export class UserResolver {
     }
 
     const key = FORGET_PASSWORD_PREFIX + token;
-    const userId = await redis.get(key);
+    const userID = await redis.get(key);
 
-    if (!userId) {
+    if (!userID) {
       return {
         errors: [
           {
@@ -67,8 +67,8 @@ export class UserResolver {
       };
     }
 
-    const userIdNum = parseInt(userId);
-    const user = await User.findOne(userIdNum);
+    const userIDNum = parseInt(userID);
+    const user = await User.findOne({ where: { userIDNum } });
 
     if (!user) {
       return {
@@ -81,15 +81,16 @@ export class UserResolver {
       };
     }
     const newHashedPassword = await argon2.hash(newPassword);
-    await User.update({ id: userIdNum }, { password: newHashedPassword });
+    await User.update({ id: userIDNum }, { password: newHashedPassword });
 
     redis.del(key);
 
     // log in user after changing the password
-    req.session.userId = user.id;
+    req.session.userID = user.id;
 
     return { user };
   }
+
   @Mutation(() => String)
   async forgotPassword(
     @Arg("email") email: string,
@@ -116,11 +117,13 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
     // you are not logged in
-    if (!req.session.userId) {
+    console.log(req.session);
+
+    if (!req.session.userID) {
       return null;
     }
 
-    return User.findOne(req.session.userId);
+    return User.findOne(req.session.userID);
   }
 
   // Register
@@ -137,22 +140,23 @@ export class UserResolver {
     const hashedPassword = await argon2.hash(options.password);
     let user;
     try {
-      // const result = await getConnection()
-      //   .createQueryBuilder()
-      //   .insert()
-      //   .into(User)
-      //   .values({
-      //     username: options.username,
-      //     email: options.email,
-      //     password: hashedPassword,
-      //   })
-      //   .returning("*")
-      //   .execute();
-      user = await User.create({
-        username: options.username,
-        email: options.email,
-        password: hashedPassword,
-      }).save();
+      const result = await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values({
+          username: options.username,
+          email: options.email,
+          password: hashedPassword,
+        })
+        .returning("*")
+        .execute();
+      user = result.raw[0];
+      // user = await User.create({
+      //   username: options.username,
+      //   email: options.email,
+      //   password: hashedPassword,
+      // }).save();
     } catch (error) {
       if (error.code === "23505") {
         if (error.detail.includes("username")) {
@@ -179,7 +183,7 @@ export class UserResolver {
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
-    req.session.userId = user?.id;
+    req.session.userID = user.id;
 
     return { user };
   }
@@ -216,7 +220,7 @@ export class UserResolver {
         ],
       };
     }
-    req.session.userId = user.id;
+    req.session.userID = user.id;
     return { user };
   }
 

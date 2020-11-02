@@ -20,11 +20,23 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
-const ioredis_1 = __importDefault(require("ioredis"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
+const typeorm_1 = require("typeorm");
+const Post_1 = require("./entities/Post");
+const User_1 = require("./entities/User");
+const ioredis_1 = __importDefault(require("ioredis"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = yield typeorm_1.createConnection({
+        type: "postgres",
+        database: "lireddit2",
+        username: "postgres",
+        password: "postgres",
+        logging: true,
+        synchronize: true,
+        entities: [Post_1.Post, User_1.User],
+    });
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redis = new ioredis_1.default();
@@ -45,7 +57,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             secure: constants_1.__prod__,
         },
         saveUninitialized: false,
-        secret: "dasdolkawfkjgdkjfbndjhnvisucoewrgjgdkjfghruenv",
+        secret: "qowiueojwojfalksdjoqiwueo",
         resave: false,
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
@@ -59,7 +71,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         app,
         cors: false,
     });
-    apolloServer.applyMiddleware({ app });
     app.listen(5000, () => console.log("server started on localhost:5000"));
 });
 main().catch((err) => console.error(err));
