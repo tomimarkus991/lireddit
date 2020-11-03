@@ -42,6 +42,9 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             <Text color={color[colorMode]} mr={2}>
               {data.me.username}
             </Text>
+            <NextLink href="/">
+              <Link>Home</Link>
+            </NextLink>
           </Flex>
         </Box>
         <Box ml="auto">
@@ -60,7 +63,14 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   }
   return (
-    <Flex bg={bgColor[colorMode]} p={3} align="center">
+    <Flex
+      position="sticky"
+      top={0}
+      zIndex={1}
+      bg={bgColor[colorMode]}
+      p={3}
+      align="center"
+    >
       {body}
     </Flex>
   );
