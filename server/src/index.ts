@@ -1,18 +1,18 @@
-import "reflect-metadata";
-import { __prod__, COOKIE_NAME } from "./constants";
-import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import express from "express";
+import session from "express-session";
+import Redis from "ioredis";
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
+import { createConnection } from "typeorm";
+import { COOKIE_NAME, __prod__ } from "./constants";
+import { Post } from "./entities/Post";
+import { User } from "./entities/User";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import session from "express-session";
-import connectRedis from "connect-redis";
-import cors from "cors";
-import { createConnection } from "typeorm";
-import { Post } from "./entities/Post";
-import { User } from "./entities/User";
-import Redis from "ioredis";
 // import path from "path";
 
 const main = async () => {
@@ -28,6 +28,8 @@ const main = async () => {
   });
 
   // await connection.runMigrations();
+
+  // await Post.delete({});
 
   const app = express();
 
