@@ -9,3 +9,5 @@ create database lireddit;
 createdb -U postgres newdatabase
 
 create migrations: npx mikro-orm migration:create
+
+access lireddit2: psql -d lireddit2 -U postgres
