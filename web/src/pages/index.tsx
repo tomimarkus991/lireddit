@@ -39,6 +39,7 @@ const Index = () => {
               title={post.title}
               desc={post.textSnippet}
               createdAt={parseInt(post.createdAt)}
+              postCreator={post.creator.username}
             />
           ))}
         </Stack>
