@@ -61,6 +61,7 @@ export type PaginatedPosts = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  vote: Scalars['Boolean'];
   createPost: Post;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
@@ -69,6 +70,12 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+};
+
+
+export type MutationVoteArgs = {
+  value: Scalars['Int'];
+  postID: Scalars['Int'];
 };
 
 
@@ -249,10 +256,10 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'textSnippet' | 'points' | 'createdAt' | 'updatedAt'>
+      & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet' | 'points'>
       & { creator: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'email'>
+        & Pick<User, 'id' | 'username'>
       ) }
     )> }
   ) }
@@ -366,15 +373,14 @@ export const PostsDocument = gql`
     hasMore
     posts {
       id
+      createdAt
+      updatedAt
       title
       textSnippet
       points
-      createdAt
-      updatedAt
       creator {
         id
         username
-        email
       }
     }
   }

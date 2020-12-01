@@ -3,15 +3,14 @@ query posts($limit: Int!, $cursor: String) {
     hasMore
     posts {
       id
+      createdAt
+      updatedAt
       title
       textSnippet
       points
-      createdAt
-      updatedAt
       creator {
         id
         username
-        email
       }
     }
   }

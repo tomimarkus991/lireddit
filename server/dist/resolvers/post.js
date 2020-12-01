@@ -59,6 +59,26 @@ let PostResolver = class PostResolver {
         }
         return root.text;
     }
+    vote(postID, value, { req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const isUpvote = value !== -1;
+            const realValue = isUpvote ? 1 : -1;
+            const { userID } = req.session;
+            typeorm_1.getConnection().query(`
+    START TRANSACTION;
+
+    insert into upvote ("userID", "postID", value)
+    values (${userID},${postID},${realValue});
+    
+    update post
+    set points = points + ${realValue}
+    where id = ${postID};
+
+    COMMIT;
+    `);
+            return true;
+        });
+    }
     post(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return Post_1.Post.findOne(id);
@@ -87,7 +107,6 @@ let PostResolver = class PostResolver {
     order by p."createdAt" DESC
     limit $1
     `, replacements);
-            console.log("posts: ", posts);
             return {
                 posts: posts.slice(0, realLimit),
                 hasMore: posts.length === realLimitPlusOne,
@@ -125,6 +144,16 @@ __decorate([
     __metadata("design:paramtypes", [Post_1.Post]),
     __metadata("design:returntype", void 0)
 ], PostResolver.prototype, "textSnippet", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
+    __param(0, type_graphql_1.Arg("postID", () => type_graphql_1.Int)),
+    __param(1, type_graphql_1.Arg("value", () => type_graphql_1.Int)),
+    __param(2, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "vote", null);
 __decorate([
     type_graphql_1.Query(() => Post_1.Post, { nullable: true }),
     __param(0, type_graphql_1.Arg("id")),
