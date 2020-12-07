@@ -3,7 +3,7 @@ import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useState } from "react";
 import Layout from "../components/Layout";
-import { PostComp } from "../components/PostComp";
+import { Post } from "../components/Post";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
@@ -34,13 +34,7 @@ const Index = () => {
       {data && !fetching ? (
         <Stack spacing={2}>
           {data!.posts.posts.map((post) => (
-            <PostComp
-              postID={post.id}
-              title={post.title}
-              desc={post.textSnippet}
-              createdAt={parseInt(post.createdAt)}
-              postCreator={post.creator.username}
-            />
+            <Post post={post} />
           ))}
         </Stack>
       ) : (
