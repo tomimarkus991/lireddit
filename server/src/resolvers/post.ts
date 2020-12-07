@@ -16,7 +16,7 @@ import {
 } from "type-graphql";
 import { Post } from "../entities/Post";
 import { getConnection } from "typeorm";
-// import { Upvote } from "../entities/Upvote";
+import { Upvote } from "../entities/Upvote";
 
 @InputType()
 class PostInput {
@@ -53,25 +53,52 @@ export class PostResolver {
     const isUpvote = value !== -1;
     const realValue = isUpvote ? 1 : -1;
     const { userID } = req.session;
-    // await Upvote.insert({
-    //   userID,
-    //   postID,
-    //   value: realValue,
-    // });
-    getConnection().query(
-      `
-    START TRANSACTION;
 
-    insert into upvote ("userID", "postID", value)
-    values (${userID},${postID},${realValue});
-    
-    update post
-    set points = points + ${realValue}
-    where id = ${postID};
+    const upvote = await Upvote.findOne({ where: { postID, userID } });
 
-    COMMIT;
-    `
-    );
+    // the user has voted on the post before
+    // and the are changing their vote
+    if (upvote && upvote.value !== realValue) {
+      await getConnection().transaction(async (tm) => {
+        // update upvote
+        await tm.query(
+          `
+          update upvote
+          set value = $1
+          where "postID" = $2 and "userID" = $3
+          `,
+          [realValue, postID, userID]
+        );
+        // update post
+        await tm.query(
+          `
+          update post
+          set points = points + $1
+          where id = $2
+          `,
+          [2 * realValue, postID]
+        );
+      });
+    } else if (!upvote) {
+      // has never voted before
+      await getConnection().transaction(async (tm) => {
+        await tm.query(
+          `
+          insert into upvote ("userID","postID","value")
+          values($1, $2, $3)
+        `,
+          [userID, postID, realValue]
+        );
+        await tm.query(
+          `
+        update post
+        set points = points + $1
+        where id = $2
+        `,
+          [realValue, postID]
+        );
+      });
+    }
     return true;
   }
 
