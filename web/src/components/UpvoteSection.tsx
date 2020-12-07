@@ -8,6 +8,7 @@ interface UpvoteSectionProps {
 
 export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
   const [, vote] = useVoteMutation();
+  const { voteStatus } = post;
   return (
     <Flex
       flexDirection="column"
@@ -19,7 +20,11 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
       <IconButton
         aria-label="upvote post"
         icon="chevron-up"
+        variantColor={voteStatus === 1 ? "green" : undefined}
         onClick={() => {
+          if (voteStatus === 1) {
+            return;
+          }
           vote({ postID: post.id, value: 1 });
         }}
       />
@@ -27,7 +32,11 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
       <IconButton
         aria-label="downvote post"
         icon="chevron-down"
+        variantColor={voteStatus === -1 ? "red" : undefined}
         onClick={() => {
+          if (voteStatus === -1) {
+            return;
+          }
           vote({ postID: post.id, value: -1 });
         }}
       />

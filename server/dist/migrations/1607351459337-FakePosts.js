@@ -1,9 +1,19 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
-
-export class FakePosts1604483923535 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    // make changes to database
-    await queryRunner.query(`insert into post (title, text, "creatorID", "createdAt") values ('Stardust Memories', 'Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FakePosts1607351459337 = void 0;
+class FakePosts1607351459337 {
+    up(queryRunner) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield queryRunner.query(`insert into post (title, text, "creatorID", "createdAt") values ('Stardust Memories', 'Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.
 
     In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.', 41, '2020-03-31T22:29:24Z');
     insert into post (title, text, "creatorID", "createdAt") values ('From Justin to Kelly', 'In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.', 41, '2020-05-26T17:32:51Z');
@@ -294,9 +304,12 @@ export class FakePosts1604483923535 implements MigrationInterface {
     
     Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.', 41, '2020-10-30T03:02:02Z');
     `);
-  }
-
-  public async down(_: QueryRunner): Promise<void> {
-    // revert changes like deleting posts
-  }
+        });
+    }
+    down(_) {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
 }
+exports.FakePosts1607351459337 = FakePosts1607351459337;
+//# sourceMappingURL=1607351459337-FakePosts.js.map
