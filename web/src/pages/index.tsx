@@ -3,7 +3,7 @@ import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useState } from "react";
 import Layout from "../components/Layout";
-import { Post } from "../components/Post";
+import { Post } from "../components/Post/Post";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
@@ -12,12 +12,12 @@ const Index = () => {
     limit: 33,
     cursor: null as null | string,
   });
-  console.log(variables);
+  // console.log(variables);
 
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
-  console.log("data", data);
+  // console.log("data", data);
 
   if (!fetching && !data) {
     return <div>Query Failed for some reason</div>;
