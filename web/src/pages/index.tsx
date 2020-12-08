@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Link, Stack } from "@chakra-ui/core";
+import { Button, Flex, Heading, Link, Stack } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useState } from "react";
@@ -9,7 +9,7 @@ import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
   const [variables, setVariables] = useState({
-    limit: 33,
+    limit: 15,
     cursor: null as null | string,
   });
   // console.log(variables);
@@ -33,8 +33,8 @@ const Index = () => {
       <br />
       {data && !fetching ? (
         <Stack spacing={2}>
-          {data!.posts.posts.map((post) => (
-            <Post post={post} />
+          {data!.posts.posts.map((post, index) => (
+            <Post post={post} key={index} />
           ))}
         </Stack>
       ) : (

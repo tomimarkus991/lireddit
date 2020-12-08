@@ -1,8 +1,7 @@
-import { Flex, Heading, Text } from "@chakra-ui/core";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import { formatDistance } from "date-fns";
-import { title } from "process";
 import React from "react";
-import { PostSnippetFragment } from "../generated/graphql";
+import { PostSnippetFragment } from "../../generated/graphql";
 
 interface UpperPostSectionProps {
   post: PostSnippetFragment;
@@ -15,10 +14,10 @@ const UpperPostSection: React.FC<UpperPostSectionProps> = ({ post }) => {
     new Date(parseInt(createdAt))
   ).toString();
   return (
-    <Flex textAlign="center" justifyContent="center" flexWrap="unset">
-      <Heading fontSize="xl">{title}</Heading>
+    <Flex>
       <Text ml="4" fontSize="sm">
-        Posted by u/{creator.username} {formatedCreatedAt} ago
+        (pic) r/pcmasterrace . Posted by u/{creator.username}{" "}
+        {formatedCreatedAt} ago
       </Text>
     </Flex>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
-import { Box, Button, Flex, Link, Text } from "@chakra-ui/core";
+import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import ColorMode from "../../components/ColorMode";
 import { InputField } from "../../components/InputField";

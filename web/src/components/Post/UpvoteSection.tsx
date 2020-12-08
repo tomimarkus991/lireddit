@@ -1,4 +1,5 @@
-import { Flex, IconButton, Text } from "@chakra-ui/core";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { Flex, IconButton, Text } from "@chakra-ui/react";
 import React from "react";
 import { PostSnippetFragment, useVoteMutation } from "../../generated/graphql";
 
@@ -19,8 +20,8 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
     >
       <IconButton
         aria-label="upvote post"
-        icon="chevron-up"
-        variantColor={voteStatus === 1 ? "green" : undefined}
+        icon={<ChevronUpIcon />}
+        colorScheme={voteStatus === 1 ? "green" : undefined}
         onClick={() => {
           if (voteStatus === 1) {
             return;
@@ -31,8 +32,8 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
       <Text>{post.points}</Text>
       <IconButton
         aria-label="downvote post"
-        icon="chevron-down"
-        variantColor={voteStatus === -1 ? "red" : undefined}
+        icon={<ChevronDownIcon />}
+        colorScheme={voteStatus === -1 ? "red" : undefined}
         onClick={() => {
           if (voteStatus === -1) {
             return;
