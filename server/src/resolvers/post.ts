@@ -48,17 +48,47 @@ export class PostResolver {
   async vote(
     @Arg("postID", () => Int) postID: number,
     @Arg("value", () => Int) value: number,
+    @Arg("voteStatus", () => Int) voteStatus: number,
     @Ctx() { req }: MyContext
   ) {
     const isUpvote = value !== -1;
     const realValue = isUpvote ? 1 : -1;
+    const realValue2 = 0;
     const { userID } = req.session;
 
     const upvote = await Upvote.findOne({ where: { postID, userID } });
 
     // the user has voted on the post before
     // and the are changing their vote
-    if (upvote && upvote.value !== realValue) {
+
+    if (upvote && upvote.value === realValue && upvote.value === voteStatus) {
+      await getConnection().transaction(async (tm) => {
+        // update upvote
+        await tm.query(
+          `
+          delete from upvote
+          where "postID" = $1 and "userID" = $2
+          `,
+          [postID, userID]
+        );
+        // update post
+        await tm.query(
+          `
+          update post
+          set points = points - $1
+          where id = $2
+          `,
+          [realValue, postID]
+        );
+        console.log(upvote);
+        console.log(realValue);
+        console.log("voteStatus", voteStatus);
+      });
+    } else if (
+      upvote &&
+      upvote.value !== realValue &&
+      upvote.value !== voteStatus
+    ) {
       await getConnection().transaction(async (tm) => {
         // update upvote
         await tm.query(

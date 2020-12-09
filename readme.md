@@ -6,6 +6,9 @@ pass: postgres
 create database lireddit;
 \list
 
+\c lireddit2
+\dt
+
 createdb -U postgres newdatabase
 
 create migrations: npx mikro-orm migration:create

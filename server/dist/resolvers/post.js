@@ -60,13 +60,32 @@ let PostResolver = class PostResolver {
         }
         return root.text;
     }
-    vote(postID, value, { req }) {
+    vote(postID, value, voteStatus, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const isUpvote = value !== -1;
             const realValue = isUpvote ? 1 : -1;
+            const realValue2 = 0;
             const { userID } = req.session;
             const upvote = yield Upvote_1.Upvote.findOne({ where: { postID, userID } });
-            if (upvote && upvote.value !== realValue) {
+            if (upvote && upvote.value === realValue && upvote.value === voteStatus) {
+                yield typeorm_1.getConnection().transaction((tm) => __awaiter(this, void 0, void 0, function* () {
+                    yield tm.query(`
+          delete from upvote
+          where "postID" = $1 and "userID" = $2
+          `, [postID, userID]);
+                    yield tm.query(`
+          update post
+          set points = points - $1
+          where id = $2
+          `, [realValue, postID]);
+                    console.log(upvote);
+                    console.log(realValue);
+                    console.log("voteStatus", voteStatus);
+                }));
+            }
+            else if (upvote &&
+                upvote.value !== realValue &&
+                upvote.value !== voteStatus) {
                 yield typeorm_1.getConnection().transaction((tm) => __awaiter(this, void 0, void 0, function* () {
                     yield tm.query(`
           update upvote
@@ -174,9 +193,10 @@ __decorate([
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("postID", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("value", () => type_graphql_1.Int)),
-    __param(2, type_graphql_1.Ctx()),
+    __param(2, type_graphql_1.Arg("voteStatus", () => type_graphql_1.Int)),
+    __param(3, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:paramtypes", [Number, Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "vote", null);
 __decorate([

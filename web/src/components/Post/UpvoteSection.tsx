@@ -23,10 +23,10 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
         icon={<ChevronUpIcon />}
         colorScheme={voteStatus === 1 ? "green" : undefined}
         onClick={() => {
-          if (voteStatus === 1) {
-            return;
-          }
-          vote({ postID: post.id, value: 1 });
+          // if (voteStatus === 1) {
+          //   return;
+          // }
+          vote({ postID: post.id, value: 1, voteStatus: 1 });
         }}
       />
       <Text>{post.points}</Text>
@@ -35,10 +35,10 @@ export const UpvoteSection: React.FC<UpvoteSectionProps> = ({ post }) => {
         icon={<ChevronDownIcon />}
         colorScheme={voteStatus === -1 ? "red" : undefined}
         onClick={() => {
-          if (voteStatus === -1) {
-            return;
-          }
-          vote({ postID: post.id, value: -1 });
+          // if (voteStatus === -1) {
+          //   return;
+          // }
+          vote({ postID: post.id, value: -1, voteStatus: -1 });
         }}
       />
     </Flex>
