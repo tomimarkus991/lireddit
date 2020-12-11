@@ -6,11 +6,9 @@ pass: postgres
 create database lireddit;
 \list
 
-\c lireddit2
-\dt
+\c lireddit switches to lireddit
+\dt shows tables
 
 createdb -U postgres newdatabase
 
-create migrations: npx mikro-orm migration:create
-
-access lireddit2: psql -d lireddit2 -U postgres
+access lireddit: psql -d lireddit -U postgres

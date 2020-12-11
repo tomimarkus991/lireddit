@@ -8,7 +8,8 @@
     "dev": "nodemon dist/index.js",
     "start": "node dist/index.js",
     "start2": "ts-node src/index.ts",
-    "createMigration": "npx typeorm migration:create -n FakePosts -d src/migrations "
+    "cm": "npx typeorm migration:create -n FakePosts -d src/migrations ",
+    "test": "ts-node ./node_modules/typeorm/cli.js migration:run"
   },
   "keywords": [],
   "author": "",
@@ -22,14 +23,10 @@
     "@types/redis": "^2.8.27",
     "@types/uuid": "^8.3.0",
     "nodemon": "^2.0.4",
-    "ts-node": "^9.0.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.0.3"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.0.7",
-    "@mikro-orm/core": "^4.0.7",
-    "@mikro-orm/migrations": "^4.0.7",
-    "@mikro-orm/postgresql": "^4.0.7",
     "@types/cors": "^2.8.7",
     "@types/nodemailer": "^6.4.0",
     "apollo-server-express": "^2.18.1",

@@ -75,6 +75,7 @@ export type Mutation = {
 
 
 export type MutationVoteArgs = {
+  upvoteStatus?: Maybe<Scalars['Int']>;
   voteStatus: Scalars['Int'];
   value: Scalars['Int'];
   postID: Scalars['Int'];
@@ -143,21 +144,21 @@ export type UsernameAndPasswordInput = {
 
 export type PostSnippetFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet' | 'points' | 'voteStatus'>
+  & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
   & { creator: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'username'>
+    & Pick<User, '[object Object]' | '[object Object]' | '[object Object]'>
   ) }
 );
 
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
-  & Pick<FieldError, 'field' | 'message'>
+  & Pick<FieldError, '[object Object]' | '[object Object]'>
 );
 
 export type RegularUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username'>
+  & Pick<User, '[object Object]' | '[object Object]'>
 );
 
 export type RegularUserResponseFragment = (
@@ -194,7 +195,7 @@ export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'text' | 'points' | 'creatorID' | 'createdAt' | 'updatedAt'>
+    & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
   ) }
 );
 
@@ -205,7 +206,7 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'forgotPassword'>
+  & Pick<Mutation, '[object Object]'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -227,7 +228,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'logout'>
+  & Pick<Mutation, '[object Object]'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -252,7 +253,7 @@ export type VoteMutationVariables = Exact<{
 
 export type VoteMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'vote'>
+  & Pick<Mutation, '[object Object]'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -276,7 +277,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: (
     { __typename?: 'PaginatedPosts' }
-    & Pick<PaginatedPosts, 'hasMore'>
+    & Pick<PaginatedPosts, '[object Object]'>
     & { posts: Array<(
       { __typename?: 'Post' }
       & PostSnippetFragment

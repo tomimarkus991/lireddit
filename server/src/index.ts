@@ -6,7 +6,7 @@ import session from "express-session";
 import Redis from "ioredis";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { createConnection } from "typeorm";
+import { createConnection, ConnectionOptions } from "typeorm";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { Post } from "./entities/Post";
 import { Upvote } from "./entities/Upvote";
@@ -14,23 +14,26 @@ import { User } from "./entities/User";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-// import path from "path";
+import path from "path";
 
 const main = async () => {
-  const connection = await createConnection({
+  const config: ConnectionOptions = {
     type: "postgres",
-    database: "lireddit2",
+    database: "lireddit",
     username: "postgres",
     password: "postgres",
     logging: true,
-    synchronize: true,
-    // migrations: [path.join(__dirname, "./migrations/*")],
+    synchronize: false,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Upvote],
-  });
-
-  // await connection.runMigrations();
-
-  // await Post.delete({});
+  };
+  try {
+    let connection = await createConnection({ ...config });
+    await connection.runMigrations();
+  } catch (error) {
+    console.log("Error while connecting to the databaseyes1", error);
+    return error;
+  }
 
   const app = express();
 
@@ -41,14 +44,14 @@ const main = async () => {
     cors({
       origin: "http://localhost:3000",
       credentials: true,
-    })
+    }) as any
   );
 
   app.use(
     session({
       name: COOKIE_NAME,
       store: new RedisStore({
-        client: redis,
+        client: redis as any,
         disableTouch: true,
       }),
       cookie: {

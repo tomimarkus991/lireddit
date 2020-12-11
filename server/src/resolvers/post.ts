@@ -49,11 +49,11 @@ export class PostResolver {
     @Arg("postID", () => Int) postID: number,
     @Arg("value", () => Int) value: number,
     @Arg("voteStatus", () => Int) voteStatus: number,
+    @Arg("upvoteStatus", () => Int, { nullable: true }) upvoteStatus: number,
     @Ctx() { req }: MyContext
   ) {
     const isUpvote = value !== -1;
     const realValue = isUpvote ? 1 : -1;
-    const realValue2 = 0;
     const { userID } = req.session;
 
     const upvote = await Upvote.findOne({ where: { postID, userID } });
@@ -63,6 +63,15 @@ export class PostResolver {
 
     if (upvote && upvote.value === realValue && upvote.value === voteStatus) {
       await getConnection().transaction(async (tm) => {
+        // update post
+        await tm.query(
+          `
+          update post
+          set points = points - $1
+          where id = $2
+           `,
+          [realValue, postID]
+        );
         // update upvote
         await tm.query(
           `
@@ -71,18 +80,6 @@ export class PostResolver {
           `,
           [postID, userID]
         );
-        // update post
-        await tm.query(
-          `
-          update post
-          set points = points - $1
-          where id = $2
-          `,
-          [realValue, postID]
-        );
-        console.log(upvote);
-        console.log(realValue);
-        console.log("voteStatus", voteStatus);
       });
     } else if (
       upvote &&
@@ -135,7 +132,9 @@ export class PostResolver {
   // Get one Post
   @Query(() => Post, { nullable: true })
   async post(@Arg("id") id: number): Promise<Post | undefined> {
-    return Post.findOne(id);
+    let post = await Post.findOne(id);
+    console.log(post);
+    return post;
   }
 
   // Get all posts
@@ -180,6 +179,7 @@ export class PostResolver {
     `,
       replacements
     );
+
     // const qb = getConnection()
     //   .getRepository(Post)
     //   .createQueryBuilder("p")
@@ -192,8 +192,7 @@ export class PostResolver {
     //   });
     // }
     // const posts = await qb.getMany();
-    // console.log("posts: ", posts);
-
+    // test ds
     return {
       posts: posts.slice(0, realLimit),
       hasMore: posts.length === realLimitPlusOne,

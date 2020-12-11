@@ -28,16 +28,26 @@ const User_1 = require("./entities/User");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
+const path_1 = __importDefault(require("path"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const connection = yield typeorm_1.createConnection({
+    const config = {
         type: "postgres",
-        database: "lireddit2",
+        database: "lireddit",
         username: "postgres",
         password: "postgres",
         logging: true,
-        synchronize: true,
+        synchronize: false,
+        migrations: [path_1.default.join(__dirname, "./migrations/*")],
         entities: [Post_1.Post, User_1.User, Upvote_1.Upvote],
-    });
+    };
+    try {
+        let connection = yield typeorm_1.createConnection(Object.assign({}, config));
+        yield connection.runMigrations();
+    }
+    catch (error) {
+        console.log("Error while connecting to the databaseyes1", error);
+        return error;
+    }
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redis = new ioredis_1.default();

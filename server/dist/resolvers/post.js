@@ -60,27 +60,23 @@ let PostResolver = class PostResolver {
         }
         return root.text;
     }
-    vote(postID, value, voteStatus, { req }) {
+    vote(postID, value, voteStatus, upvoteStatus, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const isUpvote = value !== -1;
             const realValue = isUpvote ? 1 : -1;
-            const realValue2 = 0;
             const { userID } = req.session;
             const upvote = yield Upvote_1.Upvote.findOne({ where: { postID, userID } });
             if (upvote && upvote.value === realValue && upvote.value === voteStatus) {
                 yield typeorm_1.getConnection().transaction((tm) => __awaiter(this, void 0, void 0, function* () {
                     yield tm.query(`
-          delete from upvote
-          where "postID" = $1 and "userID" = $2
-          `, [postID, userID]);
-                    yield tm.query(`
           update post
           set points = points - $1
           where id = $2
-          `, [realValue, postID]);
-                    console.log(upvote);
-                    console.log(realValue);
-                    console.log("voteStatus", voteStatus);
+           `, [realValue, postID]);
+                    yield tm.query(`
+          delete from upvote
+          where "postID" = $1 and "userID" = $2
+          `, [postID, userID]);
                 }));
             }
             else if (upvote &&
@@ -117,7 +113,9 @@ let PostResolver = class PostResolver {
     }
     post(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.findOne(id);
+            let post = yield Post_1.Post.findOne(id);
+            console.log(post);
+            return post;
         });
     }
     posts(limit, cursor, { req }) {
@@ -194,9 +192,10 @@ __decorate([
     __param(0, type_graphql_1.Arg("postID", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("value", () => type_graphql_1.Int)),
     __param(2, type_graphql_1.Arg("voteStatus", () => type_graphql_1.Int)),
-    __param(3, type_graphql_1.Ctx()),
+    __param(3, type_graphql_1.Arg("upvoteStatus", () => type_graphql_1.Int, { nullable: true })),
+    __param(4, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Number, Object]),
+    __metadata("design:paramtypes", [Number, Number, Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "vote", null);
 __decorate([
