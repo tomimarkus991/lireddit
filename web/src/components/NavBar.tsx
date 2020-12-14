@@ -32,7 +32,16 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <>
         <Box mr="auto">
-          <img width="40" height="40" src={require("../../public/logo.svg")} />
+          <NextLink href="/">
+            <Link>
+              <Image
+                src={require("../../public/logo.svg")}
+                alt="Logo"
+                boxSize="12"
+                mr="5"
+              />
+            </Link>
+          </NextLink>
         </Box>
         <Box ml="auto">
           {" "}
@@ -53,23 +62,19 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       <>
         <Box mr="auto">
           <Flex alignItems="center">
-            <Image
-              src={require("../../public/logo.svg")}
-              alt="Logo"
-              boxSize="12"
-              mr="5"
-            />
-            {/* <img
-              width="40"
-              height="40"
-              src={require("../../public/logo.svg")}
-            /> */}
+            <NextLink href="/">
+              <Link>
+                <Image
+                  src={require("../../public/logo.svg")}
+                  alt="Logo"
+                  boxSize="12"
+                  mr="5"
+                />
+              </Link>
+            </NextLink>
             <Text color={color} mr={2}>
               {data.me.username}
             </Text>
-            <NextLink href="/">
-              <Link>Home</Link>
-            </NextLink>
           </Flex>
         </Box>
         <Box ml="auto">
