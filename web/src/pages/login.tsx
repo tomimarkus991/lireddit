@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Formik } from "formik";
-import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, useColorModeValue } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 import ColorMode from "../components/ColorMode";
@@ -14,6 +14,7 @@ import NextLink from "next/link";
 const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
+  const signInLink = useColorModeValue("pink.500", "cyan.500");
   return (
     <Wrapper variant="small">
       <ColorMode />
@@ -45,9 +46,19 @@ const Login: React.FC<{}> = ({}) => {
               label="Password"
               type="password"
             />
+            <Box>
+              New to LiReddit&nbsp;
+              <NextLink href="/register">
+                <Link ml="auto" textColor={signInLink}>
+                  Sign up
+                </Link>
+              </NextLink>
+            </Box>
             <Flex>
               <NextLink href="/forgot-password">
-                <Link ml="auto">Forgot Password?</Link>
+                <Link ml="auto" textColor={signInLink}>
+                  Forgot Password?
+                </Link>
               </NextLink>
             </Flex>
             <Button
@@ -64,4 +75,4 @@ const Login: React.FC<{}> = ({}) => {
     </Wrapper>
   );
 };
-export default withUrqlClient(createUrqlClient)(Login);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Login);

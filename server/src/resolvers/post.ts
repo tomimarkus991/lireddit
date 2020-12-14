@@ -49,7 +49,6 @@ export class PostResolver {
     @Arg("postID", () => Int) postID: number,
     @Arg("value", () => Int) value: number,
     @Arg("voteStatus", () => Int) voteStatus: number,
-    @Arg("upvoteStatus", () => Int, { nullable: true }) upvoteStatus: number,
     @Ctx() { req }: MyContext
   ) {
     const isUpvote = value !== -1;

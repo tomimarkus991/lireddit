@@ -5,6 +5,7 @@ import {
   Link,
   Text,
   useColorModeValue,
+  Image,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
@@ -29,16 +30,21 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   // user not logged in
   else if (!data?.me) {
     body = (
-      <Box ml="auto">
-        {" "}
-        <NextLink href="login">
-          <Link mr={2}>Login</Link>
-        </NextLink>
-        <NextLink href="register">
-          <Link mr={4}>Register</Link>
-        </NextLink>
-        <ColorMode />
-      </Box>
+      <>
+        <Box mr="auto">
+          <img width="40" height="40" src={require("../../public/logo.svg")} />
+        </Box>
+        <Box ml="auto">
+          {" "}
+          <NextLink href="login">
+            <Link mr={2}>Login</Link>
+          </NextLink>
+          <NextLink href="register">
+            <Link mr={4}>Register</Link>
+          </NextLink>
+          <ColorMode />
+        </Box>
+      </>
     );
   }
   // user is logged in
@@ -46,7 +52,18 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     body = (
       <>
         <Box mr="auto">
-          <Flex>
+          <Flex alignItems="center">
+            <Image
+              src={require("../../public/logo.svg")}
+              alt="Logo"
+              boxSize="12"
+              mr="5"
+            />
+            {/* <img
+              width="40"
+              height="40"
+              src={require("../../public/logo.svg")}
+            /> */}
             <Text color={color} mr={2}>
               {data.me.username}
             </Text>

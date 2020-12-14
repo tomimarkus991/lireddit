@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Link, Stack } from "@chakra-ui/react";
+import { Button, Flex, Heading, Image, Link, Stack } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import React, { useState } from "react";
@@ -12,12 +12,10 @@ const Index = () => {
     limit: 15,
     cursor: null as null | string,
   });
-  // console.log(variables);
 
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
-  // console.log("data", data);
 
   if (!fetching && !data) {
     return <div>Query Failed for some reason</div>;

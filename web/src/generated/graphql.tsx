@@ -75,7 +75,6 @@ export type Mutation = {
 
 
 export type MutationVoteArgs = {
-  upvoteStatus?: Maybe<Scalars['Int']>;
   voteStatus: Scalars['Int'];
   value: Scalars['Int'];
   postID: Scalars['Int'];

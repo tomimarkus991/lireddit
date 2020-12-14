@@ -60,7 +60,7 @@ let PostResolver = class PostResolver {
         }
         return root.text;
     }
-    vote(postID, value, voteStatus, upvoteStatus, { req }) {
+    vote(postID, value, voteStatus, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const isUpvote = value !== -1;
             const realValue = isUpvote ? 1 : -1;
@@ -192,10 +192,9 @@ __decorate([
     __param(0, type_graphql_1.Arg("postID", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("value", () => type_graphql_1.Int)),
     __param(2, type_graphql_1.Arg("voteStatus", () => type_graphql_1.Int)),
-    __param(3, type_graphql_1.Arg("upvoteStatus", () => type_graphql_1.Int, { nullable: true })),
-    __param(4, type_graphql_1.Ctx()),
+    __param(3, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Number, Number, Object]),
+    __metadata("design:paramtypes", [Number, Number, Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "vote", null);
 __decorate([

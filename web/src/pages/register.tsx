@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Formik } from "formik";
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Link, useColorModeValue } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
 import ColorMode from "../components/ColorMode";
@@ -9,12 +9,14 @@ import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/dist/client/router";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import NextLink from "next/link";
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   const [, register] = useRegisterMutation();
+  const signUpLink = useColorModeValue("pink.500", "cyan.500");
   return (
     <Wrapper variant="small">
       <ColorMode />
@@ -43,6 +45,14 @@ const Register: React.FC<registerProps> = ({}) => {
               label="Password"
               type="password"
             />
+            <Box>
+              Already a LiRedditor?&nbsp;
+              <NextLink href="/login">
+                <Link ml="auto" textColor={signUpLink}>
+                  Log in
+                </Link>
+              </NextLink>
+            </Box>
             <Button
               variant="outline"
               mt={2}
@@ -57,4 +67,4 @@ const Register: React.FC<registerProps> = ({}) => {
     </Wrapper>
   );
 };
-export default withUrqlClient(createUrqlClient)(Register);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Register);
