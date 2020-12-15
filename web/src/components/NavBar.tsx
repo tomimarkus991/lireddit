@@ -1,18 +1,24 @@
 import {
   Box,
   Button,
+  Collapse,
   Flex,
-  Link,
-  Text,
-  useColorModeValue,
   Heading,
+  Link,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuList,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import NextImage from "next/image";
 import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import ColorMode from "./ColorMode";
-import NextImage from "next/image";
 import { IoAdd } from "react-icons/io5";
 
 interface NavBarProps {}
@@ -20,7 +26,6 @@ interface NavBarProps {}
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   const [{ data, fetching }] = useMeQuery({ pause: isServer() });
-  // const { colorMode, toggleColorMode } = useColorMode();
 
   const bgColor = useColorModeValue("#F7FAFC", "#2D3748");
   const color = useColorModeValue("#242526", "#E4E6EB");
@@ -80,28 +85,37 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
                 </Flex>
               </Link>
             </NextLink>
-            <Text color={color} mr={2}>
-              {data.me.username}
-            </Text>
           </Flex>
         </Box>
 
         <Box ml="auto">
-          <NextLink href="create-post">
-            <Link ml="auto">
-              <IoAdd />
-            </Link>
-          </NextLink>
-          <Button
-            onClick={() => logout()}
-            isLoading={logoutFetching}
-            mr={4}
-            color={color}
-            variant="link"
-          >
-            Logout
-          </Button>
-          <ColorMode />
+          <Flex alignItems="center">
+            <Box mr="2">
+              <NextLink href="create-post">
+                <Link ml="auto">
+                  <IoAdd />
+                </Link>
+              </NextLink>
+            </Box>
+            <Menu>
+              <MenuButton as={Button}>{data.me.username}</MenuButton>
+              <MenuList>
+                <MenuGroup title="View Options">
+                  <MenuItem>
+                    <Box ml="auto" mr="auto">
+                      <ColorMode />
+                    </Box>
+                  </MenuItem>
+                </MenuGroup>
+                <MenuDivider />
+                <MenuGroup>
+                  <MenuItem onClick={() => logout()} isLoading={logoutFetching}>
+                    Logout
+                  </MenuItem>
+                </MenuGroup>
+              </MenuList>
+            </Menu>
+          </Flex>
         </Box>
       </>
     );
