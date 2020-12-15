@@ -62,7 +62,7 @@ UserResponse = __decorate([
 ], UserResponse);
 let UserResolver = class UserResolver {
     email(user, { req }) {
-        if (req.session.userID === user.id) {
+        if (req.session.userId === user.id) {
             return user.email;
         }
         return "";
@@ -80,8 +80,8 @@ let UserResolver = class UserResolver {
                 };
             }
             const key = constants_1.FORGET_PASSWORD_PREFIX + token;
-            const userID = yield redis.get(key);
-            if (!userID) {
+            const userId = yield redis.get(key);
+            if (!userId) {
                 return {
                     errors: [
                         {
@@ -91,8 +91,8 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            const userIDNum = parseInt(userID);
-            const user = yield User_1.User.findOne({ where: { userIDNum } });
+            const userIdNum = parseInt(userId);
+            const user = yield User_1.User.findOne({ where: { userIdNum } });
             if (!user) {
                 return {
                     errors: [
@@ -104,9 +104,9 @@ let UserResolver = class UserResolver {
                 };
             }
             const newHashedPassword = yield argon2_1.default.hash(newPassword);
-            yield User_1.User.update({ id: userIDNum }, { password: newHashedPassword });
+            yield User_1.User.update({ id: userIdNum }, { password: newHashedPassword });
             redis.del(key);
-            req.session.userID = user.id;
+            req.session.userId = user.id;
             return { user };
         });
     }
@@ -124,10 +124,10 @@ let UserResolver = class UserResolver {
         });
     }
     me({ req }) {
-        if (!req.session.userID) {
+        if (!req.session.userId) {
             return null;
         }
-        return User_1.User.findOne(req.session.userID);
+        return User_1.User.findOne(req.session.userId);
     }
     register(options, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -175,7 +175,7 @@ let UserResolver = class UserResolver {
                     }
                 }
             }
-            req.session.userID = user.id;
+            req.session.userId = user.id;
             return { user };
         });
     }
@@ -205,7 +205,7 @@ let UserResolver = class UserResolver {
                     ],
                 };
             }
-            req.session.userID = user.id;
+            req.session.userId = user.id;
             return { user };
         });
     }

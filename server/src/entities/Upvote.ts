@@ -9,13 +9,13 @@ export class Upvote extends BaseEntity {
   value: number;
   @Field()
   @PrimaryColumn()
-  userID: number;
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.upvotes)
   user: User;
 
   @PrimaryColumn()
-  postID: number;
+  postId: number;
 
   @ManyToOne(() => Post, (post) => post.upvotes)
   post: Post;

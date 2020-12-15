@@ -45,7 +45,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         yield connection.runMigrations();
     }
     catch (error) {
-        console.log("Error while connecting to the databaseyes1", error);
+        console.log("Error while connecting to the database", error);
         return error;
     }
     const app = express_1.default();

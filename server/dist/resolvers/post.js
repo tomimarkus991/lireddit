@@ -60,23 +60,23 @@ let PostResolver = class PostResolver {
         }
         return root.text;
     }
-    vote(postID, value, voteStatus, { req }) {
+    vote(postId, value, voteStatus, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const isUpvote = value !== -1;
             const realValue = isUpvote ? 1 : -1;
-            const { userID } = req.session;
-            const upvote = yield Upvote_1.Upvote.findOne({ where: { postID, userID } });
+            const { userId } = req.session;
+            const upvote = yield Upvote_1.Upvote.findOne({ where: { postId, userId } });
             if (upvote && upvote.value === realValue && upvote.value === voteStatus) {
                 yield typeorm_1.getConnection().transaction((tm) => __awaiter(this, void 0, void 0, function* () {
                     yield tm.query(`
           update post
           set points = points - $1
           where id = $2
-           `, [realValue, postID]);
+           `, [realValue, postId]);
                     yield tm.query(`
           delete from upvote
-          where "postID" = $1 and "userID" = $2
-          `, [postID, userID]);
+          where "postId" = $1 and "userId" = $2
+          `, [postId, userId]);
                 }));
             }
             else if (upvote &&
@@ -86,45 +86,41 @@ let PostResolver = class PostResolver {
                     yield tm.query(`
           update upvote
           set value = $1
-          where "postID" = $2 and "userID" = $3
-          `, [realValue, postID, userID]);
+          where "postId" = $2 and "userId" = $3
+          `, [realValue, postId, userId]);
                     yield tm.query(`
           update post
           set points = points + $1
           where id = $2
-          `, [2 * realValue, postID]);
+          `, [2 * realValue, postId]);
                 }));
             }
             else if (!upvote) {
                 yield typeorm_1.getConnection().transaction((tm) => __awaiter(this, void 0, void 0, function* () {
                     yield tm.query(`
-          insert into upvote ("userID","postID","value")
+          insert into upvote ("userId","postId","value")
           values($1, $2, $3)
-        `, [userID, postID, realValue]);
+        `, [userId, postId, realValue]);
                     yield tm.query(`
         update post
         set points = points + $1
         where id = $2
-        `, [realValue, postID]);
+        `, [realValue, postId]);
                 }));
             }
             return true;
         });
     }
     post(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let post = yield Post_1.Post.findOne(id);
-            console.log(post);
-            return post;
-        });
+        return Post_1.Post.findOne(id, { relations: ["creator"] });
     }
     posts(limit, cursor, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const realLimit = Math.min(limit, 50);
             const realLimitPlusOne = realLimit + 1;
             const replacements = [realLimitPlusOne];
-            if (req.session.userID) {
-                replacements.push(req.session.userID);
+            if (req.session.userId) {
+                replacements.push(req.session.userId);
             }
             let cursorIndex = 3;
             if (cursor) {
@@ -140,11 +136,11 @@ let PostResolver = class PostResolver {
       'createdAt', u."createdAt",
       'updatedAt', u."updatedAt"
     ) creator,
-    ${req.session.userID
-                ? '(select value from upvote where "userID" = $2 and "postID" = p.id) "voteStatus"'
+    ${req.session.userId
+                ? '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"'
                 : 'null as "voteStatus"'}
     from post p
-    inner join public.user u on u.id = p."creatorID"
+    inner join public.user u on u.id = p."creatorId"
     ${cursor ? `where p."createdAt" < $${cursorIndex}` : ""}
     order by p."createdAt" DESC
     limit $1
@@ -157,7 +153,7 @@ let PostResolver = class PostResolver {
     }
     createPost(input, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorID: req.session.userID })).save();
+            return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
         });
     }
     updatePost(id, title) {
@@ -189,7 +185,7 @@ __decorate([
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
-    __param(0, type_graphql_1.Arg("postID", () => type_graphql_1.Int)),
+    __param(0, type_graphql_1.Arg("postId", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("value", () => type_graphql_1.Int)),
     __param(2, type_graphql_1.Arg("voteStatus", () => type_graphql_1.Int)),
     __param(3, type_graphql_1.Ctx()),
@@ -199,7 +195,7 @@ __decorate([
 ], PostResolver.prototype, "vote", null);
 __decorate([
     type_graphql_1.Query(() => Post_1.Post, { nullable: true }),
-    __param(0, type_graphql_1.Arg("id")),
+    __param(0, type_graphql_1.Arg("id", () => type_graphql_1.Int)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
@@ -232,7 +228,7 @@ __decorate([
 ], PostResolver.prototype, "updatePost", null);
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
-    __param(0, type_graphql_1.Arg("id")),
+    __param(0, type_graphql_1.Arg("id", () => type_graphql_1.Int)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)

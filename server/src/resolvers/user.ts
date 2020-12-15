@@ -41,7 +41,7 @@ export class UserResolver {
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { req }: MyContext) {
     // this is the current user Tomi and its ok to show Tomi his email
-    if (req.session.userID === user.id) {
+    if (req.session.userId === user.id) {
       return user.email;
     }
     // current user wants to see someone elses email so it will be empty
@@ -66,9 +66,9 @@ export class UserResolver {
     }
 
     const key = FORGET_PASSWORD_PREFIX + token;
-    const userID = await redis.get(key);
+    const userId = await redis.get(key);
 
-    if (!userID) {
+    if (!userId) {
       return {
         errors: [
           {
@@ -79,8 +79,8 @@ export class UserResolver {
       };
     }
 
-    const userIDNum = parseInt(userID);
-    const user = await User.findOne({ where: { userIDNum } });
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne({ where: { userIdNum } });
 
     if (!user) {
       return {
@@ -93,12 +93,12 @@ export class UserResolver {
       };
     }
     const newHashedPassword = await argon2.hash(newPassword);
-    await User.update({ id: userIDNum }, { password: newHashedPassword });
+    await User.update({ id: userIdNum }, { password: newHashedPassword });
 
     redis.del(key);
 
     // log in user after changing the password
-    req.session.userID = user.id;
+    req.session.userId = user.id;
 
     return { user };
   }
@@ -129,11 +129,11 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
     // you are not logged in
-    if (!req.session.userID) {
+    if (!req.session.userId) {
       return null;
     }
 
-    return User.findOne(req.session.userID);
+    return User.findOne(req.session.userId);
   }
 
   // Register
@@ -193,7 +193,7 @@ export class UserResolver {
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
-    req.session.userID = user.id;
+    req.session.userId = user.id;
 
     return { user };
   }
@@ -230,7 +230,7 @@ export class UserResolver {
         ],
       };
     }
-    req.session.userID = user.id;
+    req.session.userId = user.id;
     return { user };
   }
 

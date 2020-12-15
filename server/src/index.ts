@@ -31,7 +31,7 @@ const main = async () => {
     let connection = await createConnection({ ...config });
     await connection.runMigrations();
   } catch (error) {
-    console.log("Error while connecting to the databaseyes1", error);
+    console.log("Error while connecting to the database", error);
     return error;
   }
 

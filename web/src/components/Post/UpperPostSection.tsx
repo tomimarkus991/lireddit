@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { formatDistance } from "date-fns";
 import React from "react";
 import { PostSnippetFragment } from "../../generated/graphql";

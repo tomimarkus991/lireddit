@@ -1,8 +1,9 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { PostSnippetFragment } from "../../generated/graphql";
 import UpperPostSection from "./UpperPostSection";
 import { UpvoteSection } from "./UpvoteSection";
+import NextLink from "next/link";
 
 interface PostProps {
   post: PostSnippetFragment;
@@ -18,7 +19,11 @@ export const Post: React.FC<PostProps> = ({ post }) => {
         <UpperPostSection post={post} />
         <Flex direction="column">
           <Box>
-            <Heading fontSize="xl">{title}</Heading>
+            <NextLink href="/post/[id]" as={`/post/${id}`}>
+              <Link>
+                <Heading fontSize="xl">{title}</Heading>
+              </Link>
+            </NextLink>
           </Box>
           <Box>
             <Text mt={4}>{textSnippet}</Text>

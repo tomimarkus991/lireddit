@@ -5,13 +5,15 @@ import {
   Link,
   Text,
   useColorModeValue,
-  Image,
+  Heading,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import ColorMode from "./ColorMode";
+import NextImage from "next/image";
+import { IoAdd } from "react-icons/io5";
 
 interface NavBarProps {}
 
@@ -34,15 +36,16 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         <Box mr="auto">
           <NextLink href="/">
             <Link>
-              <Image
-                src={require("../../public/logo.svg")}
-                alt="Logo"
-                boxSize="12"
-                mr="5"
-              />
+              <Flex alignItems="center">
+                <NextImage src="/logo.svg" alt="Logo" width={60} height={60} />
+                <Heading ml="1" mr="4">
+                  LiReddit
+                </Heading>
+              </Flex>
             </Link>
           </NextLink>
         </Box>
+
         <Box ml="auto">
           {" "}
           <NextLink href="login">
@@ -64,12 +67,17 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           <Flex alignItems="center">
             <NextLink href="/">
               <Link>
-                <Image
-                  src={require("../../public/logo.svg")}
-                  alt="Logo"
-                  boxSize="12"
-                  mr="5"
-                />
+                <Flex alignItems="center">
+                  <NextImage
+                    src="/logo.svg"
+                    alt="Logo"
+                    width={60}
+                    height={60}
+                  />
+                  <Heading ml="1" mr="4">
+                    LiReddit
+                  </Heading>
+                </Flex>
               </Link>
             </NextLink>
             <Text color={color} mr={2}>
@@ -77,7 +85,13 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             </Text>
           </Flex>
         </Box>
+
         <Box ml="auto">
+          <NextLink href="create-post">
+            <Link ml="auto">
+              <IoAdd />
+            </Link>
+          </NextLink>
           <Button
             onClick={() => logout()}
             isLoading={logoutFetching}

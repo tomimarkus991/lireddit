@@ -101,7 +101,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
           Mutation: {
             vote: (_result, args, cache, info) => {
               const {
-                postID,
+                postId,
                 value,
                 voteStatus,
               } = args as VoteMutationVariables;
@@ -113,7 +113,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                     voteStatus
                   }
                 `,
-                { id: postID } as any
+                { id: postId } as any
               );
 
               if (data) {
@@ -127,7 +127,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                       }
                     `,
                     {
-                      id: postID,
+                      id: postId,
                       points: newPoints,
                       voteStatus: 0,
                     } as any
@@ -147,7 +147,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                     }
                   `,
                   {
-                    id: postID,
+                    id: postId,
                     points: newPoints,
                     voteStatus: value,
                   } as any

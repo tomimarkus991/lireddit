@@ -46,16 +46,16 @@ export class PostResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async vote(
-    @Arg("postID", () => Int) postID: number,
+    @Arg("postId", () => Int) postId: number,
     @Arg("value", () => Int) value: number,
     @Arg("voteStatus", () => Int) voteStatus: number,
     @Ctx() { req }: MyContext
   ) {
     const isUpvote = value !== -1;
     const realValue = isUpvote ? 1 : -1;
-    const { userID } = req.session;
+    const { userId } = req.session;
 
-    const upvote = await Upvote.findOne({ where: { postID, userID } });
+    const upvote = await Upvote.findOne({ where: { postId, userId } });
 
     // the user has voted on the post before
     // and the are changing their vote
@@ -69,15 +69,15 @@ export class PostResolver {
           set points = points - $1
           where id = $2
            `,
-          [realValue, postID]
+          [realValue, postId]
         );
         // update upvote
         await tm.query(
           `
           delete from upvote
-          where "postID" = $1 and "userID" = $2
+          where "postId" = $1 and "userId" = $2
           `,
-          [postID, userID]
+          [postId, userId]
         );
       });
     } else if (
@@ -91,9 +91,9 @@ export class PostResolver {
           `
           update upvote
           set value = $1
-          where "postID" = $2 and "userID" = $3
+          where "postId" = $2 and "userId" = $3
           `,
-          [realValue, postID, userID]
+          [realValue, postId, userId]
         );
         // update post
         await tm.query(
@@ -102,7 +102,7 @@ export class PostResolver {
           set points = points + $1
           where id = $2
           `,
-          [2 * realValue, postID]
+          [2 * realValue, postId]
         );
       });
     } else if (!upvote) {
@@ -110,10 +110,10 @@ export class PostResolver {
       await getConnection().transaction(async (tm) => {
         await tm.query(
           `
-          insert into upvote ("userID","postID","value")
+          insert into upvote ("userId","postId","value")
           values($1, $2, $3)
         `,
-          [userID, postID, realValue]
+          [userId, postId, realValue]
         );
         await tm.query(
           `
@@ -121,7 +121,7 @@ export class PostResolver {
         set points = points + $1
         where id = $2
         `,
-          [realValue, postID]
+          [realValue, postId]
         );
       });
     }
@@ -130,10 +130,8 @@ export class PostResolver {
 
   // Get one Post
   @Query(() => Post, { nullable: true })
-  async post(@Arg("id") id: number): Promise<Post | undefined> {
-    let post = await Post.findOne(id);
-    console.log(post);
-    return post;
+  post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
+    return Post.findOne(id, { relations: ["creator"] });
   }
 
   // Get all posts
@@ -147,8 +145,8 @@ export class PostResolver {
     const realLimitPlusOne = realLimit + 1;
 
     const replacements: any[] = [realLimitPlusOne];
-    if (req.session.userID) {
-      replacements.push(req.session.userID);
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
     }
     let cursorIndex = 3;
     if (cursor) {
@@ -166,12 +164,12 @@ export class PostResolver {
       'updatedAt', u."updatedAt"
     ) creator,
     ${
-      req.session.userID
-        ? '(select value from upvote where "userID" = $2 and "postID" = p.id) "voteStatus"'
+      req.session.userId
+        ? '(select value from upvote where "userId" = $2 and "postId" = p.id) "voteStatus"'
         : 'null as "voteStatus"'
     }
     from post p
-    inner join public.user u on u.id = p."creatorID"
+    inner join public.user u on u.id = p."creatorId"
     ${cursor ? `where p."createdAt" < $${cursorIndex}` : ""}
     order by p."createdAt" DESC
     limit $1
@@ -182,7 +180,7 @@ export class PostResolver {
     // const qb = getConnection()
     //   .getRepository(Post)
     //   .createQueryBuilder("p")
-    //   .innerJoinAndSelect("p.creator", "u", 'u.id = p."creatorID"')
+    //   .innerJoinAndSelect("p.creator", "u", 'u.id = p."creatorId"')
     //   .orderBy('p."createdAt"', "DESC")
     //   .take(realLimitPlusOne);
     // if (cursor) {
@@ -205,7 +203,7 @@ export class PostResolver {
     @Arg("input") input: PostInput,
     @Ctx() { req }: MyContext
   ): Promise<Post> {
-    return Post.create({ ...input, creatorID: req.session.userID }).save();
+    return Post.create({ ...input, creatorId: req.session.userId }).save();
   }
 
   // Update Post
@@ -225,7 +223,7 @@ export class PostResolver {
 
   // Delete Post
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id") id: number): Promise<boolean> {
+  async deletePost(@Arg("id", () => Int) id: number): Promise<boolean> {
     await Post.delete(id);
     return true;
   }
