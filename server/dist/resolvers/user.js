@@ -199,7 +199,7 @@ let UserResolver = class UserResolver {
                 return {
                     errors: [
                         {
-                            field: "password",
+                            field: "usernameOrEmail",
                             message: "username or password incorrect",
                         },
                     ],

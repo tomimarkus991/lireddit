@@ -4,6 +4,8 @@ import {
   Collapse,
   Flex,
   Heading,
+  Icon,
+  IconButton,
   Link,
   Menu,
   MenuButton,
@@ -19,7 +21,9 @@ import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import ColorMode from "./ColorMode";
-import { IoAdd } from "react-icons/io5";
+import { FaPlus, FaUser } from "react-icons/fa";
+import { LoginModal } from "./LoginModal";
+import { RegisterModal } from "./RegisterModal";
 
 interface NavBarProps {}
 
@@ -28,7 +32,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   const [{ data, fetching }] = useMeQuery({ pause: isServer() });
 
   const bgColor = useColorModeValue("#F7FAFC", "#2D3748");
-  const color = useColorModeValue("#242526", "#E4E6EB");
+  // const color = useColorModeValue("#242526", "#E4E6EB");
   let body;
   // data is loading
   if (fetching) {
@@ -52,14 +56,29 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         </Box>
 
         <Box ml="auto">
-          {" "}
-          <NextLink href="login">
-            <Link mr={2}>Login</Link>
-          </NextLink>
-          <NextLink href="register">
-            <Link mr={4}>Register</Link>
-          </NextLink>
-          <ColorMode />
+          <LoginModal text="Login" />
+
+          <RegisterModal text="Register" />
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              icon={<FaUser />}
+              aria-label="Profile"
+            />
+            <MenuList>
+              <MenuGroup title="View Options">
+                <MenuItem as={Box} ml="auto" mr="auto">
+                  Toggle mode <ColorMode buttonSize="md" />
+                </MenuItem>
+              </MenuGroup>
+              <MenuDivider />
+              <MenuGroup>
+                <MenuItem>
+                  <LoginModal text="Log In / Sign Up" />
+                </MenuItem>
+              </MenuGroup>
+            </MenuList>
+          </Menu>
         </Box>
       </>
     );
@@ -92,19 +111,20 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           <Flex alignItems="center">
             <Box mr="2">
               <NextLink href="create-post">
-                <Link ml="auto">
-                  <IoAdd />
-                </Link>
+                <IconButton
+                  as={Link}
+                  ml="auto"
+                  aria-label="Create post"
+                  icon={<FaPlus />}
+                />
               </NextLink>
             </Box>
             <Menu>
               <MenuButton as={Button}>{data.me.username}</MenuButton>
               <MenuList>
                 <MenuGroup title="View Options">
-                  <MenuItem>
-                    <Box ml="auto" mr="auto">
-                      <ColorMode />
-                    </Box>
+                  <MenuItem as={Box} ml="auto" mr="auto">
+                    Toggle mode <ColorMode buttonSize="md" />
                   </MenuItem>
                 </MenuGroup>
                 <MenuDivider />

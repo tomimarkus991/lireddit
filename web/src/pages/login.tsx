@@ -1,15 +1,15 @@
-import React from "react";
-import { Form, Formik } from "formik";
 import { Box, Button, Flex, Link, useColorModeValue } from "@chakra-ui/react";
-import { Wrapper } from "../components/Wrapper";
-import { InputField } from "../components/InputField";
-import ColorMode from "../components/ColorMode";
-import { useLoginMutation } from "../generated/graphql";
-import { toErrorMap } from "../utils/toErrorMap";
-import { useRouter } from "next/dist/client/router";
+import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { InputField } from "../components/InputField";
+import { RegisterModal } from "../components/RegisterModal";
+import { Wrapper } from "../components/Wrapper";
+import { useLoginMutation } from "../generated/graphql";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { toErrorMap } from "../utils/toErrorMap";
 
 const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -17,7 +17,6 @@ const Login: React.FC<{}> = ({}) => {
   const signInLink = useColorModeValue("pink.500", "cyan.500");
   return (
     <Wrapper variant="small">
-      <ColorMode />
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -42,17 +41,15 @@ const Login: React.FC<{}> = ({}) => {
             />
             <InputField
               name="password"
-              placeholder="Password"
               label="Password"
-              type="password"
+              placeholder="Enter password"
             />
+
             <Box>
               New to LiReddit&nbsp;
-              <NextLink href="/register">
-                <Link ml="auto" textColor={signInLink}>
-                  Sign up
-                </Link>
-              </NextLink>
+              {/* <Button onClick={onClose}> */}
+              <RegisterModal text="Sign up" />
+              {/* </Button> */}
             </Box>
             <Flex>
               <NextLink href="/forgot-password">
@@ -66,6 +63,8 @@ const Login: React.FC<{}> = ({}) => {
               mt={2}
               type="submit"
               isLoading={isSubmitting}
+              colorScheme="blue"
+              mr={3}
             >
               Login
             </Button>
@@ -75,4 +74,4 @@ const Login: React.FC<{}> = ({}) => {
     </Wrapper>
   );
 };
-export default withUrqlClient(createUrqlClient, { ssr: true })(Login);
+export default withUrqlClient(createUrqlClient)(Login);

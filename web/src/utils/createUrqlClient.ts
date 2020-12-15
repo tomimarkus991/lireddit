@@ -1,4 +1,5 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
+import gql from "graphql-tag";
 import Router from "next/router";
 import {
   dedupExchange,
@@ -16,7 +17,6 @@ import {
   VoteMutationVariables,
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
-import gql from "graphql-tag";
 import { isServer } from "./isServer";
 
 const errorExchange: Exchange = ({ forward }) => (ops$) => {
@@ -44,7 +44,7 @@ export const cursorPagination = (): Resolver => {
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     const isItInTheCache = cache.resolve(
-      cache.resolveFieldByKey(entityKey, fieldKey) as string,
+      cache.resolve(entityKey, fieldKey) as string,
       "posts"
     );
 
@@ -73,7 +73,7 @@ export const cursorPagination = (): Resolver => {
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   let cookie = "";
   if (isServer()) {
-    cookie = ctx.req.headers.cookie;
+    cookie = ctx?.req?.headers.cookie;
   }
 
   return {
