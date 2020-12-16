@@ -67,14 +67,14 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             />
             <MenuList>
               <MenuGroup title="View Options">
-                <MenuItem as={Box} ml="auto" mr="auto">
-                  Toggle mode <ColorMode buttonSize="md" />
+                <MenuItem as={Box} ml="auto">
+                  Toggle mode <ColorMode buttonSize="md" mLeft="2" />
                 </MenuItem>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup>
                 <MenuItem>
-                  <LoginModal text="Log In / Sign Up" />
+                  <LoginModal text="Log In / Sign Up" useButton={false} />
                 </MenuItem>
               </MenuGroup>
             </MenuList>
@@ -124,7 +124,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
               <MenuList>
                 <MenuGroup title="View Options">
                   <MenuItem as={Box} ml="auto" mr="auto">
-                    Toggle mode <ColorMode buttonSize="md" />
+                    Toggle mode <ColorMode buttonSize="md" mLeft="2" />
                   </MenuItem>
                 </MenuGroup>
                 <MenuDivider />

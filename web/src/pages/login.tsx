@@ -5,6 +5,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { InputField } from "../components/InputField";
+import Layout from "../components/Layout";
 import { RegisterModal } from "../components/RegisterModal";
 import { Wrapper } from "../components/Wrapper";
 import { useLoginMutation } from "../generated/graphql";
@@ -16,7 +17,7 @@ const Login: React.FC<{}> = ({}) => {
   const [, login] = useLoginMutation();
   const signInLink = useColorModeValue("pink.500", "cyan.500");
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -48,8 +49,13 @@ const Login: React.FC<{}> = ({}) => {
             <Box>
               New to LiReddit&nbsp;
               {/* <Button onClick={onClose}> */}
-              <RegisterModal text="Sign up" />
+              {/* <RegisterModal text="Sign up" /> */}
               {/* </Button> */}
+              <NextLink href="/register">
+                <Link ml="auto" textColor={signInLink}>
+                  Sign up
+                </Link>
+              </NextLink>
             </Box>
             <Flex>
               <NextLink href="/forgot-password">
@@ -71,7 +77,7 @@ const Login: React.FC<{}> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 export default withUrqlClient(createUrqlClient)(Login);

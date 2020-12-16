@@ -4,10 +4,12 @@ import React from "react";
 
 interface ColorModeProps {
   buttonSize: string;
+  mLeft?: string;
 }
 
-const ColorMode: React.FC<ColorModeProps> = ({ buttonSize }) => {
+const ColorMode: React.FC<ColorModeProps> = ({ buttonSize, mLeft }) => {
   const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <IconButton
       icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
@@ -15,6 +17,7 @@ const ColorMode: React.FC<ColorModeProps> = ({ buttonSize }) => {
       aria-label="Switch color-mode"
       variant="outline"
       size={buttonSize}
+      ml={mLeft}
     />
   );
 };

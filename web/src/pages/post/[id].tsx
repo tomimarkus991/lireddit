@@ -39,7 +39,7 @@ const Post = ({}) => {
     <Layout>
       <Heading mb={4}>{data.post.title}</Heading>
       {data.post.text}
-      {data.post.creator.username}
+      Creator: {data.post.creator.username}
     </Layout>
   );
 };

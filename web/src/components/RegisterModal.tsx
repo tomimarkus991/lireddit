@@ -26,7 +26,10 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ text }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const [, register] = useRegisterMutation();
-  const signUpLink = useColorModeValue("pink.500", "cyan.500");
+  const registerLink = useColorModeValue("pink.500", "cyan.500");
+  console.log("isOpen RegisterModal", isOpen);
+  // console.log("onOpen RegisterModal", onOpen);
+  // console.log("onClose RegisterModal", onClose);
   return (
     <>
       <Button onClick={onOpen} mr="3">
@@ -67,18 +70,17 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ text }) => {
                     name="password"
                     placeholder="Password"
                     label="Password"
-                    type="password"
                   />
                   <Box>
                     Already a LiRedditor?&nbsp;
                     {/* <Button onClick={onClose}> */}
-                    <LoginModal text="Log in" />
+                    {/* <LoginModal text="Log in" /> */}
                     {/* </Button> */}
-                    {/* <NextLink href="/login">
-                      <Link ml="auto" textColor={signUpLink}>
+                    <NextLink href="/login">
+                      <Link ml="auto" textColor={registerLink}>
                         Log in
                       </Link>
-                    </NextLink> */}
+                    </NextLink>
                   </Box>
                   <Button
                     variant="outline"

@@ -11,6 +11,7 @@ import {
   ModalOverlay,
   useColorModeValue,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import NextLink from "next/link";
@@ -23,18 +24,32 @@ import { RegisterModal } from "./RegisterModal";
 
 interface LoginModalProps {
   text: string;
+  useButton?: boolean;
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ text }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({
+  text,
+  useButton = true,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const [, login] = useLoginMutation();
   const signInLink = useColorModeValue("pink.500", "cyan.500");
+  console.log("isOpen LoginModal", isOpen);
+  // console.log("onOpen LoginModal", onOpen);
+  // console.log("onClose LoginModal", onClose);
+
   return (
     <>
-      <Button onClick={onOpen} mr="2">
-        {text}
-      </Button>
+      {useButton ? (
+        <Button onClick={onOpen} mr="2">
+          {text}
+        </Button>
+      ) : (
+        <Box onClick={onOpen} cursor="pointer" w="100%">
+          <Text>{text}</Text>
+        </Box>
+      )}
       <Modal
         closeOnOverlayClick={false}
         isOpen={isOpen}
@@ -77,8 +92,13 @@ export const LoginModal: React.FC<LoginModalProps> = ({ text }) => {
                   <Box>
                     New to LiReddit&nbsp;
                     {/* <Button onClick={onClose}> */}
-                    <RegisterModal text="Sign up" />
+                    {/* <RegisterModal text="Sign up" /> */}
                     {/* </Button> */}
+                    <NextLink href="/register">
+                      <Link ml="auto" textColor={signInLink}>
+                        Register
+                      </Link>
+                    </NextLink>
                   </Box>
                   <Flex>
                     <NextLink href="/forgot-password">
