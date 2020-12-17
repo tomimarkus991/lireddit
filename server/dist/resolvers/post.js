@@ -156,8 +156,9 @@ let PostResolver = class PostResolver {
             return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
         });
     }
-    updatePost(id, title) {
+    updatePost(id, input) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { title, text } = input;
             const post = yield Post_1.Post.findOne({ where: { id } });
             if (!post) {
                 return null;
@@ -168,9 +169,17 @@ let PostResolver = class PostResolver {
             return post;
         });
     }
-    deletePost(id) {
+    deletePost(id, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield Post_1.Post.delete(id);
+            const post = yield Post_1.Post.findOne(id);
+            if (!post) {
+                return false;
+            }
+            if (post.creatorId !== req.session.userId) {
+                throw new Error("Not authorized");
+            }
+            yield Upvote_1.Upvote.delete({ postId: id });
+            yield Post_1.Post.delete({ id, creatorId: req.session.userId });
             return true;
         });
     }
@@ -220,17 +229,20 @@ __decorate([
 ], PostResolver.prototype, "createPost", null);
 __decorate([
     type_graphql_1.Mutation(() => Post_1.Post, { nullable: true }),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("id")),
-    __param(1, type_graphql_1.Arg("title", () => String, { nullable: true })),
+    __param(1, type_graphql_1.Arg("input")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, PostInput]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "updatePost", null);
 __decorate([
     type_graphql_1.Mutation(() => Boolean),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("id", () => type_graphql_1.Int)),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "deletePost", null);
 PostResolver = __decorate([

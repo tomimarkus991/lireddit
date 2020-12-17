@@ -1,9 +1,13 @@
-import { Box, Flex, Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Link, Text } from "@chakra-ui/react";
 import React from "react";
-import { PostSnippetFragment } from "../../generated/graphql";
+import {
+  PostSnippetFragment,
+  UserSnippetFragment,
+} from "../../generated/graphql";
 import UpperPostSection from "./UpperPostSection";
 import { UpvoteSection } from "./UpvoteSection";
 import NextLink from "next/link";
+import { FaTrash } from "react-icons/fa";
 
 interface PostProps {
   post: PostSnippetFragment;
@@ -15,7 +19,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
   return (
     <Flex p="3" mb="3" shadow="md" borderWidth="1px" key={id}>
       <UpvoteSection post={post} />
-      <Box>
+      <Box flex={1}>
         <UpperPostSection post={post} />
         <Flex direction="column">
           <Box>

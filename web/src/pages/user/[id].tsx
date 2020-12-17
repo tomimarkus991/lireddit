@@ -3,20 +3,19 @@ import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React from "react";
 import Layout from "../../components/Layout";
-import { usePostQuery } from "../../generated/graphql";
+import { useUserQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 
-const Post = ({}) => {
+const User: React.FC = () => {
   const router = useRouter();
   const intId =
     typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
-  const [{ data, error, fetching }] = usePostQuery({
+  const [{ data, error, fetching }] = useUserQuery({
     pause: intId === -1,
     variables: {
       id: intId,
     },
   });
-
   if (fetching) {
     return (
       <Layout>
@@ -29,20 +28,20 @@ const Post = ({}) => {
   if (error) {
     return <div>{error.message}</div>;
   }
-  if (!data?.post) {
+  if (!data?.user) {
     return (
       <Layout>
-        <Box>Could not find post</Box>
+        <Box>Could not find the user</Box>
       </Layout>
     );
   }
-
+  const { id, username, email } = data.user;
   return (
     <Layout>
-      <Heading mb={4}>{data.post.title}</Heading>
-      {data.post.text}
-      Creator: {data.post.creator.username}
+      <Heading mb={4}>{username}</Heading>
+      {email}
+      Creator: {id}
     </Layout>
   );
 };
-export default withUrqlClient(createUrqlClient, { ssr: true })(Post);
+export default withUrqlClient(createUrqlClient, { ssr: true })(User);

@@ -35,7 +35,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const router = useRouter();
   const [, login] = useLoginMutation();
   const signInLink = useColorModeValue("pink.500", "cyan.500");
-  console.log("isOpen LoginModal", isOpen);
+  // console.log("isOpen LoginModal", isOpen);
   // console.log("onOpen LoginModal", onOpen);
   // console.log("onClose LoginModal", onClose);
 

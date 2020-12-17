@@ -208,10 +208,12 @@ export class PostResolver {
 
   // Update Post
   @Mutation(() => Post, { nullable: true })
+  @UseMiddleware(isAuth)
   async updatePost(
     @Arg("id") id: number,
-    @Arg("title", () => String, { nullable: true }) title: string
+    @Arg("input") input: PostInput
   ): Promise<Post | null> {
+    const { title, text } = input;
     const post = await Post.findOne({ where: { id } });
     if (!post) {
       return null;
@@ -223,8 +225,21 @@ export class PostResolver {
 
   // Delete Post
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id", () => Int) id: number): Promise<boolean> {
-    await Post.delete(id);
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    const post = await Post.findOne(id);
+    if (!post) {
+      return false;
+    }
+    if (post.creatorId !== req.session.userId) {
+      throw new Error("Not authorized");
+    }
+    await Upvote.delete({ postId: id });
+
+    await Post.delete({ id, creatorId: req.session.userId });
     return true;
   }
 }

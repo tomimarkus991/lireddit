@@ -21,9 +21,9 @@ export const Posts: React.FC = () => {
     <Layout>
       {data && !fetching ? (
         <Stack spacing={2}>
-          {data!.posts.posts.map((post, index) => (
-            <Post post={post} key={index} />
-          ))}
+          {data!.posts.posts.map((post, index) =>
+            !post ? null : <Post post={post} key={index} />
+          )}
         </Stack>
       ) : (
         <div>loading</div>

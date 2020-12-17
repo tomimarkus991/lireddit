@@ -27,7 +27,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ text }) => {
   const router = useRouter();
   const [, register] = useRegisterMutation();
   const registerLink = useColorModeValue("pink.500", "cyan.500");
-  console.log("isOpen RegisterModal", isOpen);
+  // console.log("isOpen RegisterModal", isOpen);
   // console.log("onOpen RegisterModal", onOpen);
   // console.log("onClose RegisterModal", onClose);
   return (

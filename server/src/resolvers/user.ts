@@ -5,6 +5,7 @@ import {
   Ctx,
   Field,
   FieldResolver,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -134,6 +135,11 @@ export class UserResolver {
     }
 
     return User.findOne(req.session.userId);
+  }
+  // Get one User
+  @Query(() => User, { nullable: true })
+  user(@Arg("id", () => Int) id: number): Promise<User | undefined> {
+    return User.findOne(id);
   }
 
   // Register

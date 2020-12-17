@@ -44,14 +44,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
       <>
         <Box mr="auto">
           <NextLink href="/">
-            <Link>
-              <Flex alignItems="center">
-                <NextImage src="/logo.svg" alt="Logo" width={60} height={60} />
-                <Heading ml="1" mr="4">
-                  LiReddit
-                </Heading>
-              </Flex>
-            </Link>
+            <Flex alignItems="center" cursor="pointer">
+              <NextImage src="/logo.svg" alt="Logo" width={60} height={60} />
+              <Heading ml="1" mr="4">
+                LiReddit
+              </Heading>
+            </Flex>
           </NextLink>
         </Box>
 
@@ -141,15 +139,10 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     );
   }
   return (
-    <Flex
-      position="sticky"
-      top={0}
-      zIndex={1}
-      bg={bgColor}
-      p={3}
-      align="center"
-    >
-      {body}
+    <Flex position="sticky" top={0} zIndex={1} bg={bgColor} p={3}>
+      <Flex flex={1} maxW={1200} align="center" m="auto">
+        {body}
+      </Flex>
     </Flex>
   );
 };

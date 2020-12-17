@@ -7,6 +7,7 @@ import { Post } from "./Post";
 export class Upvote extends BaseEntity {
   @Column({ type: "int" })
   value: number;
+
   @Field()
   @PrimaryColumn()
   userId: number;
