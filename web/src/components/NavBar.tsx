@@ -24,20 +24,25 @@ import ColorMode from "./ColorMode";
 import { FaPlus, FaUser } from "react-icons/fa";
 import { LoginModal } from "./LoginModal";
 import { RegisterModal } from "./RegisterModal";
+import { useRouter } from "next/router";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
+  const router = useRouter();
+
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   const [{ data, fetching }] = useMeQuery({ pause: isServer() });
 
   const bgColor = useColorModeValue("#F7FAFC", "#2D3748");
   // const color = useColorModeValue("#242526", "#E4E6EB");
   let body;
+
   // data is loading
   if (fetching) {
     body = null;
   }
+
   // user not logged in
   else if (!data?.me) {
     body = (
@@ -127,7 +132,13 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup>
-                  <MenuItem onClick={() => logout()} isLoading={logoutFetching}>
+                  <MenuItem
+                    onClick={async () => {
+                      await logout();
+                      router.reload();
+                    }}
+                    isLoading={logoutFetching}
+                  >
                     Logout
                   </MenuItem>
                 </MenuGroup>
