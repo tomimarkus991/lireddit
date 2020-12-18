@@ -1,50 +1,57 @@
 import { Box, Flex, IconButton, Link, Text } from "@chakra-ui/react";
 import { formatDistance } from "date-fns";
 import React from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import {
   PostSnippetFragment,
   useDeletePostMutation,
+  useMeQuery,
   UserSnippetFragment,
 } from "../../generated/graphql";
 import NextLink from "next/link";
 
 interface UpperPostSectionProps {
   post: PostSnippetFragment;
-  user: UserSnippetFragment;
 }
 
-const UpperPostSection: React.FC<UpperPostSectionProps> = ({ post, user }) => {
+const UpperPostSection: React.FC<UpperPostSectionProps> = ({ post }) => {
   const [, deletePost] = useDeletePostMutation();
-  const { creator, createdAt, id } = post;
+  const [{ data: meData }] = useMeQuery();
+  const { creator, createdAt } = post;
   const formatedCreatedAt = formatDistance(
     new Date(),
     new Date(parseInt(createdAt))
   ).toString();
   return (
     <Flex>
-      <Box flex={1}>
-        <Box ml="4">
-          (pic) r/pcmasterrace . Posted by{" "}
-          <Box>
-            <NextLink href="/user/[id]" as={`/user/${creator.id}`}>
-              <Link>
-                <Text>{creator.username} </Text>
-              </Link>
-            </NextLink>
-          </Box>
-        </Box>
-        <Text ml="2">{formatedCreatedAt} ago</Text>
-      </Box>
-      <IconButton
-        ml="auto"
-        icon={<FaTrash />}
-        aria-label="delete"
-        colorScheme="red"
-        onClick={() => {
-          deletePost({ id });
-        }}
-      />
+      (pic) r/pcmasterrace . Posted by
+      <NextLink href="/user/[id]" as={`/user/${creator.id}`}>
+        <Link>
+          <Text>{creator.username}</Text>
+        </Link>
+      </NextLink>
+      <Text ml="2">{formatedCreatedAt} ago</Text>
+      {meData?.me?.id === post.creator.id ? (
+        <>
+          <IconButton
+            ml="auto"
+            mr="2"
+            icon={<FaTrash />}
+            aria-label="delete"
+            colorScheme="red"
+            onClick={() => {
+              deletePost({ id: post.id });
+            }}
+          />
+          <NextLink href="/post/edit/[id]" as={`/post/edit/${post.id}`}>
+            <IconButton
+              icon={<FaEdit />}
+              aria-label="edit"
+              colorScheme="blue"
+            />
+          </NextLink>
+        </>
+      ) : null}
     </Flex>
   );
 };

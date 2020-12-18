@@ -210,17 +210,23 @@ export class PostResolver {
   @Mutation(() => Post, { nullable: true })
   @UseMiddleware(isAuth)
   async updatePost(
-    @Arg("id") id: number,
-    @Arg("input") input: PostInput
+    @Arg("id", () => Int) id: number,
+    @Arg("title") title: string,
+    @Arg("text") text: string,
+    @Ctx() { req }: MyContext
   ): Promise<Post | null> {
-    const { title, text } = input;
-    const post = await Post.findOne({ where: { id } });
-    if (!post) {
-      return null;
-    } else if (typeof title !== "undefined" && title !== "") {
-      Post.update({ id }, { title });
-    }
-    return post;
+    // const oldPost = await this.post(id);
+    const post = await getConnection()
+      .createQueryBuilder()
+      .update(Post)
+      .set({ title, text })
+      .where('id = :id and "creatorId" = :creatorId', {
+        id,
+        creatorId: req.session.userId,
+      })
+      .returning("*")
+      .execute();
+    return post.raw[0];
   }
 
   // Delete Post
