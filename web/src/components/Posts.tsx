@@ -10,12 +10,12 @@ export const Posts: React.FC = () => {
     cursor: null as null | string,
   });
 
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
   if (!fetching && !data) {
-    return <div>Query Failed for some reason</div>;
+    return <div>{error?.message}</div>;
   }
   return (
     <Layout>

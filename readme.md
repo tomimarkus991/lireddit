@@ -12,3 +12,6 @@ create database lireddit;
 createdb -U postgres newdatabase
 
 access lireddit: psql -d lireddit -U postgres
+
+select post.title from post where post."creatorId" is null;
+delete from post where post."creatorId" is null;

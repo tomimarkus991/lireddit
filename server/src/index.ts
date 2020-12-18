@@ -15,6 +15,8 @@ import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import path from "path";
+import { createUserLoader } from "./utils/createUserLoader";
+import { createUpvoteLoader } from "./utils/createUpvoteLoader";
 
 const main = async () => {
   const config: ConnectionOptions = {
@@ -29,6 +31,7 @@ const main = async () => {
   };
   try {
     let connection = await createConnection({ ...config });
+    // await Post.delete({});
     await connection.runMigrations();
   } catch (error) {
     console.log("Error while connecting to the database", error);
@@ -71,7 +74,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+      upvoteLoader: createUpvoteLoader(),
+    }),
   });
   apolloServer.applyMiddleware({
     app,
