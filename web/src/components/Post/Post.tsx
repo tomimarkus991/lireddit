@@ -1,13 +1,9 @@
-import { Box, Flex, Heading, IconButton, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Link, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React from "react";
-import {
-  PostSnippetFragment,
-  UserSnippetFragment,
-} from "../../generated/graphql";
+import { PostSnippetFragment } from "../../generated/graphql";
 import UpperPostSection from "./UpperPostSection";
 import { UpvoteSection } from "./UpvoteSection";
-import NextLink from "next/link";
-import { FaTrash } from "react-icons/fa";
 
 interface PostProps {
   post: PostSnippetFragment;

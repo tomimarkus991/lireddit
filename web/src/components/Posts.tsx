@@ -6,7 +6,7 @@ import { usePostsQuery } from "../generated/graphql";
 
 export const Posts: React.FC = () => {
   const [variables, setVariables] = useState({
-    limit: 15,
+    limit: 10,
     cursor: null as null | string,
   });
 

@@ -1,4 +1,11 @@
-import { Box, Flex, IconButton, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  IconButton,
+  Link,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { formatDistance } from "date-fns";
 import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -22,6 +29,7 @@ const UpperPostSection: React.FC<UpperPostSectionProps> = ({ post }) => {
     new Date(),
     new Date(parseInt(createdAt))
   ).toString();
+  const deleteButtonColor = useColorModeValue("red.500", "red.500");
   return (
     <Flex>
       (pic) r/pcmasterrace . Posted by
@@ -38,7 +46,8 @@ const UpperPostSection: React.FC<UpperPostSectionProps> = ({ post }) => {
             mr="2"
             icon={<FaTrash />}
             aria-label="delete"
-            colorScheme="red"
+            // colorScheme="red"
+            bg={deleteButtonColor}
             onClick={() => {
               deletePost({ id: post.id });
             }}

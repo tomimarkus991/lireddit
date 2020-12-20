@@ -1,13 +1,7 @@
 import { AppProps } from "next/app";
 import * as React from "react";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: "dark",
-};
-
-const customTheme = extendTheme({ config });
+import { ChakraProvider } from "@chakra-ui/react";
+import customTheme from "../theme";
 
 const App = ({ Component, pageProps }: AppProps): React.ReactNode => {
   return (

@@ -20,7 +20,6 @@ import React from "react";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { InputField } from "./InputField";
-import { RegisterModal } from "./RegisterModal";
 
 interface LoginModalProps {
   text: string;
@@ -35,9 +34,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const router = useRouter();
   const [, login] = useLoginMutation();
   const signInLink = useColorModeValue("pink.500", "cyan.500");
-  // console.log("isOpen LoginModal", isOpen);
-  // console.log("onOpen LoginModal", onOpen);
-  // console.log("onClose LoginModal", onClose);
 
   return (
     <>
