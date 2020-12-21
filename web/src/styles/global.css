@@ -4,3 +4,8 @@ body {
   margin: 0;
   background-color: "#18191A";
 }
+
+.text {
+  max-height: 200px;
+  mask-image: linear-gradient(180deg, #000 60%, transparent);
+}

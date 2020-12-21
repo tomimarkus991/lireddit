@@ -34,23 +34,11 @@ const validateRegister_1 = require("../utils/validateRegister");
 const sendEmail_1 = require("../utils/sendEmail");
 const uuid_1 = require("uuid");
 const typeorm_1 = require("typeorm");
-let FieldError = class FieldError {
-};
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], FieldError.prototype, "field", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], FieldError.prototype, "message", void 0);
-FieldError = __decorate([
-    type_graphql_1.ObjectType()
-], FieldError);
+const FieldError_1 = require("../utils/FieldError");
 let UserResponse = class UserResponse {
 };
 __decorate([
-    type_graphql_1.Field(() => [FieldError], { nullable: true }),
+    type_graphql_1.Field(() => [FieldError_1.FieldError], { nullable: true }),
     __metadata("design:type", Array)
 ], UserResponse.prototype, "errors", void 0);
 __decorate([
@@ -132,13 +120,13 @@ let UserResolver = class UserResolver {
     user(id) {
         return User_1.User.findOne(id);
     }
-    register(options, { req }) {
+    register(input, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const errors = validateRegister_1.validateRegister(options);
+            const errors = validateRegister_1.validateRegister(input);
             if (errors) {
                 return { errors };
             }
-            const hashedPassword = yield argon2_1.default.hash(options.password);
+            const hashedPassword = yield argon2_1.default.hash(input.password);
             let user;
             try {
                 const result = yield typeorm_1.getConnection()
@@ -146,8 +134,8 @@ let UserResolver = class UserResolver {
                     .insert()
                     .into(User_1.User)
                     .values({
-                    username: options.username,
-                    email: options.email,
+                    username: input.username,
+                    email: input.email,
                     password: hashedPassword,
                 })
                     .returning("*")
@@ -264,7 +252,7 @@ __decorate([
 ], UserResolver.prototype, "user", null);
 __decorate([
     type_graphql_1.Mutation(() => UserResponse),
-    __param(0, type_graphql_1.Arg("options")),
+    __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [UsernameAndPasswordInput_1.UsernameAndPasswordInput, Object]),

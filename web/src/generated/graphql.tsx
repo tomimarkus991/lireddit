@@ -71,7 +71,7 @@ export type PaginatedPosts = {
 export type Mutation = {
   __typename?: 'Mutation';
   vote: Scalars['Boolean'];
-  createPost: Post;
+  createPost: PostResponse;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
   changePassword: UserResponse;
@@ -95,8 +95,8 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationUpdatePostArgs = {
-  text?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
+  text: Scalars['String'];
+  title: Scalars['String'];
   id: Scalars['Int'];
 };
 
@@ -118,13 +118,25 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationRegisterArgs = {
-  options: UsernameAndPasswordInput;
+  input: UsernameAndPasswordInput;
 };
 
 
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
+};
+
+export type PostResponse = {
+  __typename?: 'PostResponse';
+  errors?: Maybe<Array<FieldError>>;
+  post?: Maybe<Post>;
+};
+
+export type FieldError = {
+  __typename?: 'FieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type PostInput = {
@@ -138,12 +150,6 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
-export type FieldError = {
-  __typename?: 'FieldError';
-  field: Scalars['String'];
-  message: Scalars['String'];
-};
-
 export type UsernameAndPasswordInput = {
   username: Scalars['String'];
   email: Scalars['String'];
@@ -152,10 +158,10 @@ export type UsernameAndPasswordInput = {
 
 export type PostSnippetFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'points' | 'textSnippet' | 'voteStatus'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'points' | 'textSnippet' | 'text' | 'voteStatus'>
   & { creator: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username'>
+    & Pick<User, 'id' | 'email' | 'username'>
   ) }
 );
 
@@ -207,8 +213,14 @@ export type CreatePostMutationVariables = Exact<{
 export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'text' | 'points' | 'creatorId' | 'createdAt' | 'updatedAt'>
+    { __typename?: 'PostResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'text' | 'points' | 'creatorId' | 'createdAt' | 'updatedAt'>
+    )> }
   ) }
 );
 
@@ -255,7 +267,7 @@ export type LogoutMutation = (
 );
 
 export type RegisterMutationVariables = Exact<{
-  options: UsernameAndPasswordInput;
+  input: UsernameAndPasswordInput;
 }>;
 
 
@@ -349,7 +361,7 @@ export type UserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'email'>
+    & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
   )> }
 );
 
@@ -361,9 +373,11 @@ export const PostSnippetFragmentDoc = gql`
   title
   points
   textSnippet
+  text
   voteStatus
   creator {
     id
+    email
     username
   }
 }
@@ -412,13 +426,19 @@ export function useChangePasswordMutation() {
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
   createPost(input: $input) {
-    id
-    title
-    text
-    points
-    creatorId
-    createdAt
-    updatedAt
+    errors {
+      field
+      message
+    }
+    post {
+      id
+      title
+      text
+      points
+      creatorId
+      createdAt
+      updatedAt
+    }
   }
 }
     `;
@@ -465,8 +485,8 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($options: UsernameAndPasswordInput!) {
-  register(options: $options) {
+    mutation Register($input: UsernameAndPasswordInput!) {
+  register(input: $input) {
     ...RegularUserResponse
   }
 }
@@ -550,6 +570,8 @@ export const UserDocument = gql`
     id
     username
     email
+    createdAt
+    updatedAt
   }
 }
     `;

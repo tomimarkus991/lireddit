@@ -1,11 +1,9 @@
-import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "src/types";
 import {
   Arg,
   Ctx,
   Field,
   FieldResolver,
-  InputType,
   Int,
   Mutation,
   ObjectType,
@@ -14,17 +12,22 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { Post } from "../entities/Post";
 import { getConnection } from "typeorm";
+import { Post } from "../entities/Post";
 import { Upvote } from "../entities/Upvote";
 import { User } from "../entities/User";
+import { isAuth } from "../middleware/isAuth";
+import { PostInput } from "./PostInput";
+import { validateCreatePost } from "../utils/validateCreatePost";
+import { FieldError } from "../utils/FieldError";
 
-@InputType()
-class PostInput {
-  @Field()
-  title!: string;
-  @Field()
-  text!: string;
+@ObjectType()
+class PostResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => Post, { nullable: true })
+  post?: Post;
 }
 
 @ObjectType()
@@ -39,8 +42,8 @@ class PaginatedPosts {
 export class PostResolver {
   @FieldResolver(() => String)
   textSnippet(@Root() post: Post) {
-    if (post.text.length >= 50) {
-      return post.text.slice(0, 50) + "...";
+    if (post.text.length >= 600) {
+      return post.text.slice(0, 600) + "...";
     }
     return post.text;
   }
@@ -189,13 +192,24 @@ export class PostResolver {
   }
 
   // Create post
-  @Mutation(() => Post)
+  @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async createPost(
     @Arg("input") input: PostInput,
     @Ctx() { req }: MyContext
-  ): Promise<Post> {
-    return Post.create({ ...input, creatorId: req.session.userId }).save();
+  ): Promise<PostResponse> {
+    const errors = validateCreatePost(input);
+    if (errors) {
+      return { errors };
+    }
+
+    let post = Post.create({
+      ...input,
+      creatorId: req.session.userId,
+    }).save() as any;
+    console.log("post post post post post post post post post", post);
+
+    return { post };
   }
 
   // Update Post

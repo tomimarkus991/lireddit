@@ -19,14 +19,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
+import { FieldError } from "../utils/FieldError";
 
 @ObjectType()
 class UserResponse {
@@ -145,15 +138,15 @@ export class UserResolver {
   // Register
   @Mutation(() => UserResponse)
   async register(
-    @Arg("options") options: UsernameAndPasswordInput,
+    @Arg("input") input: UsernameAndPasswordInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const errors = validateRegister(options);
+    const errors = validateRegister(input);
     if (errors) {
       return { errors };
     }
 
-    const hashedPassword = await argon2.hash(options.password);
+    const hashedPassword = await argon2.hash(input.password);
     let user;
     try {
       const result = await getConnection()
@@ -161,16 +154,16 @@ export class UserResolver {
         .insert()
         .into(User)
         .values({
-          username: options.username,
-          email: options.email,
+          username: input.username,
+          email: input.email,
           password: hashedPassword,
         })
         .returning("*")
         .execute();
       user = result.raw[0];
       // user = await User.create({
-      //   username: options.username,
-      //   email: options.email,
+      //   username: input.username,
+      //   email: input.email,
       //   password: hashedPassword,
       // }).save();
     } catch (error) {

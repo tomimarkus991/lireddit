@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import React from "react";
 import Layout from "../../components/Layout";
@@ -9,13 +9,7 @@ const Post = ({}) => {
   const [{ data, error, fetching }] = useGetPostFromUrl();
 
   if (fetching) {
-    return (
-      <Layout>
-        <Box>
-          <Text>Loading...</Text>
-        </Box>
-      </Layout>
-    );
+    return null;
   }
   if (error) {
     return <div>{error.message}</div>;

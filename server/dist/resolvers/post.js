@@ -22,25 +22,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
-const isAuth_1 = require("../middleware/isAuth");
 const type_graphql_1 = require("type-graphql");
-const Post_1 = require("../entities/Post");
 const typeorm_1 = require("typeorm");
+const Post_1 = require("../entities/Post");
 const Upvote_1 = require("../entities/Upvote");
 const User_1 = require("../entities/User");
-let PostInput = class PostInput {
+const isAuth_1 = require("../middleware/isAuth");
+const PostInput_1 = require("./PostInput");
+const validateCreatePost_1 = require("../utils/validateCreatePost");
+const FieldError_1 = require("../utils/FieldError");
+let PostResponse = class PostResponse {
 };
 __decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], PostInput.prototype, "title", void 0);
+    type_graphql_1.Field(() => [FieldError_1.FieldError], { nullable: true }),
+    __metadata("design:type", Array)
+], PostResponse.prototype, "errors", void 0);
 __decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], PostInput.prototype, "text", void 0);
-PostInput = __decorate([
-    type_graphql_1.InputType()
-], PostInput);
+    type_graphql_1.Field(() => Post_1.Post, { nullable: true }),
+    __metadata("design:type", Post_1.Post)
+], PostResponse.prototype, "post", void 0);
+PostResponse = __decorate([
+    type_graphql_1.ObjectType()
+], PostResponse);
 let PaginatedPosts = class PaginatedPosts {
 };
 __decorate([
@@ -56,8 +59,8 @@ PaginatedPosts = __decorate([
 ], PaginatedPosts);
 let PostResolver = class PostResolver {
     textSnippet(post) {
-        if (post.text.length >= 50) {
-            return post.text.slice(0, 50) + "...";
+        if (post.text.length >= 600) {
+            return post.text.slice(0, 600) + "...";
         }
         return post.text;
     }
@@ -153,7 +156,13 @@ let PostResolver = class PostResolver {
     }
     createPost(input, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
+            const errors = validateCreatePost_1.validateCreatePost(input);
+            if (errors) {
+                return { errors };
+            }
+            let post = Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
+            console.log("post post post post post post post post post", post);
+            return { post };
         });
     }
     updatePost(id, title, text, { req }) {
@@ -235,12 +244,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "posts", null);
 __decorate([
-    type_graphql_1.Mutation(() => Post_1.Post),
+    type_graphql_1.Mutation(() => PostResponse),
     type_graphql_1.UseMiddleware(isAuth_1.isAuth),
     __param(0, type_graphql_1.Arg("input")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [PostInput, Object]),
+    __metadata("design:paramtypes", [PostInput_1.PostInput, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "createPost", null);
 __decorate([

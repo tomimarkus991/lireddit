@@ -1,4 +1,5 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import moment from "moment";
 import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React from "react";
@@ -17,13 +18,7 @@ const User: React.FC = () => {
     },
   });
   if (fetching) {
-    return (
-      <Layout>
-        <Box>
-          <Text>Loading...</Text>
-        </Box>
-      </Layout>
-    );
+    return null;
   }
   if (error) {
     return <div>{error.message}</div>;
@@ -35,12 +30,22 @@ const User: React.FC = () => {
       </Layout>
     );
   }
-  const { id, username, email } = data.user;
+  const { username, createdAt } = data.user;
+  moment.locale("en-nz");
+
   return (
     <Layout>
-      <Heading mb={4}>{username}</Heading>
-      {email}
-      Creator: {id}
+      <Flex>
+        <Box borderWidth="1px" borderRadius="lg">
+          <Box>
+            <Heading>{username}</Heading>
+          </Box>
+          <Box>
+            <Text>Cake day</Text>
+            <Text>{moment(parseInt(createdAt)).format("ll")}</Text>
+          </Box>
+        </Box>
+      </Flex>
     </Layout>
   );
 };

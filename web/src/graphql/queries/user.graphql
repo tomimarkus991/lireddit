@@ -3,5 +3,7 @@ query User($id: Int!) {
     id
     username
     email
+    createdAt
+    updatedAt
   }
 }
