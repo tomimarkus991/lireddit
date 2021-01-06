@@ -22,7 +22,7 @@ type InputFieldProps = {
 export const InputField: React.FC<InputFieldProps> = ({ ...props }) => {
   const { label, placeholder, textarea, name } = props;
   const [show, setShow] = useState(false);
-  let InputOrTextarea = Input;
+  let InputOrTextarea: any = Input;
   if (textarea) {
     InputOrTextarea = Textarea;
   }

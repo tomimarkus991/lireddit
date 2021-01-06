@@ -1,25 +1,24 @@
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
+import { withUrqlClient } from "next-urql";
+import { useRouter } from "next/dist/client/router";
+import NextLink from "next/link";
 import React, { useState } from "react";
-import { NextPage } from "next";
-import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
 import ColorMode from "../../components/ColorMode";
 import { InputField } from "../../components/InputField";
 import { Wrapper } from "../../components/Wrapper";
-import { toErrorMap } from "../../utils/toErrorMap";
 import { useChangePasswordMutation } from "../../generated/graphql";
-import { useRouter } from "next/dist/client/router";
-import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
-import NextLink from "next/link";
+import { toErrorMap } from "../../utils/toErrorMap";
 
-const ChangePassword: NextPage = () => {
+const ChangePassword: React.FC<{}> = () => {
   const router = useRouter();
   const [, changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
 
   return (
     <Wrapper variant="small">
-      <ColorMode />
+      <ColorMode buttonSize="md" mLeft="2" />
       <Formik
         initialValues={{ newPassword: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -45,7 +44,6 @@ const ChangePassword: NextPage = () => {
               name="newPassword"
               placeholder="New Password"
               label="Your New Password"
-              type="password"
             />
             {tokenError ? (
               <Flex>

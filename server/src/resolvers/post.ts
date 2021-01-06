@@ -207,7 +207,6 @@ export class PostResolver {
       ...input,
       creatorId: req.session.userId,
     }).save() as any;
-    console.log("post post post post post post post post post", post);
 
     return { post };
   }
@@ -253,5 +252,27 @@ export class PostResolver {
 
     await Post.delete({ id, creatorId: req.session.userId });
     return true;
+  }
+
+  // Hide Post
+  @Mutation(() => Post, { nullable: true })
+  @UseMiddleware(isAuth)
+  async hidePost(
+    @Arg("id", () => Int) id: number,
+    @Arg("isHidden") isHidden: boolean,
+    @Ctx() { req }: MyContext
+  ): Promise<Post | null> {
+    // const oldPost = await this.post(id);
+    const post = await getConnection()
+      .createQueryBuilder()
+      .update(Post)
+      .set({ isHidden: !isHidden })
+      .where('id = :id and "creatorId" = :creatorId', {
+        id,
+        creatorId: req.session.userId,
+      })
+      .returning("*")
+      .execute();
+    return post.raw[0];
   }
 }

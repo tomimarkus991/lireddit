@@ -1,38 +1,39 @@
 import { ApolloServer } from "apollo-server-express";
 import connectRedis from "connect-redis";
 import cors from "cors";
+import "dotenv-safe/config";
 import express from "express";
 import session from "express-session";
 import Redis from "ioredis";
+import path from "path";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { createConnection, ConnectionOptions } from "typeorm";
+import { ConnectionOptions, createConnection } from "typeorm";
 import { COOKIE_NAME, __prod__ } from "./constants";
+import { Comment } from "./entities/Comment";
 import { Post } from "./entities/Post";
+import { SubReddit } from "./entities/SubReddit";
 import { Upvote } from "./entities/Upvote";
 import { User } from "./entities/User";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import path from "path";
-import { createUserLoader } from "./utils/createUserLoader";
 import { createUpvoteLoader } from "./utils/createUpvoteLoader";
+import { createUserLoader } from "./utils/createUserLoader";
 
 const main = async () => {
   const config: ConnectionOptions = {
     type: "postgres",
-    database: "lireddit",
-    username: "postgres",
-    password: "postgres",
+    url: process.env.DATABASE_URL,
     logging: true,
-    synchronize: false,
+    synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Upvote],
+    entities: [Post, User, Upvote, Comment, SubReddit],
   };
   try {
-    let connection = await createConnection({ ...config });
+    await createConnection({ ...config });
     // await Post.delete({});
-    await connection.runMigrations();
+    // await connection.runMigrations();
   } catch (error) {
     console.log("Error while connecting to the database", error);
     return error;
@@ -41,11 +42,12 @@ const main = async () => {
   const app = express();
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
 
+  app.set("trust proxy", 1);
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     }) as any
   );
@@ -62,9 +64,10 @@ const main = async () => {
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
+        domain: __prod__ ? ".codesendace.com" : undefined,
       },
       saveUninitialized: false,
-      secret: "qowiueojwojfalksdjoqiwueo",
+      secret: process.env.SESSION_SECRET,
       resave: false,
     })
   );
@@ -87,7 +90,9 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(5000, () => console.log("server started on localhost:5000"));
+  app.listen(parseInt(process.env.PORT), () =>
+    console.log("server started on localhost:5000")
+  );
 };
 
 main().catch((err) => console.error(err));

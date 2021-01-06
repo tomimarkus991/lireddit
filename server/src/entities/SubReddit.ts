@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Post } from "./Post";
-import { Upvote } from "./Upvote";
 import { User } from "./User";
 
 @ObjectType()

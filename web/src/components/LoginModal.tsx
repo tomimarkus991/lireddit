@@ -9,9 +9,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
   useColorModeValue,
   useDisclosure,
-  Text,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import NextLink from "next/link";

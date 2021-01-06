@@ -18,7 +18,6 @@ import React from "react";
 import { InputField } from "../components/InputField";
 import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { LoginModal } from "./LoginModal";
 interface RegisterModalProps {
   text: string;
 }

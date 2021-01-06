@@ -24,19 +24,21 @@ export const Post: React.FC<PostProps> = ({ post }) => {
     >
       <UpvoteSection post={post} />
       <Flex direction="column">
-        <Box flex={1}>
-          <UpperPostSection post={post} />
-          <Flex direction="column">
-            <NextLink href="/post/[id]" as={`/post/${id}`}>
-              <Link>
-                <Heading fontSize="xl">{title}</Heading>
-              </Link>
-            </NextLink>
-            <Box className="text">
-              <Text mt={4}>{text}</Text>
-            </Box>
-          </Flex>
-        </Box>
+        <UpperPostSection post={post} />
+        <NextLink href="/post/[id]" as={`/post/${id}`}>
+          <Link>
+            <Heading fontSize="xl">{title}</Heading>
+          </Link>
+        </NextLink>
+        {text.length < 400 ? (
+          <Box className="text-small">
+            <Text mt={4}>{text}</Text>
+          </Box>
+        ) : (
+          <Box className="text-large">
+            <Text mt={4}>{text}</Text>
+          </Box>
+        )}
         <BottomPostSection post={post} />
       </Flex>
     </Flex>

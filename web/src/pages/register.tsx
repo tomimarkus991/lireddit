@@ -6,7 +6,6 @@ import NextLink from "next/link";
 import React from "react";
 import { InputField } from "../components/InputField";
 import Layout from "../components/Layout";
-import { Wrapper } from "../components/Wrapper";
 import { useRegisterMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -24,7 +23,7 @@ const Register: React.FC<registerProps> = ({}) => {
         <Formik
           initialValues={{ username: "", email: "", password: "" }}
           onSubmit={async (values, { setErrors }) => {
-            const response = await register({ options: values });
+            const response = await register({ input: values });
             if (response.data?.register.errors) {
               setErrors(toErrorMap(response.data.register.errors));
             } else if (response.data?.register.user) {

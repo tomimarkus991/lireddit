@@ -1,5 +1,5 @@
-import { Button, Box } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
+import { Box, Button } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import React, { useState } from "react";
 import ColorMode from "../components/ColorMode";
@@ -13,7 +13,7 @@ const forgotPassword: React.FC<{}> = ({}) => {
   const [, forgotPassword] = useForgotPasswordMutation();
   return (
     <Wrapper variant="small">
-      <ColorMode />
+      <ColorMode buttonSize="md" mLeft="2" />
       <Formik
         initialValues={{ email: "" }}
         onSubmit={async (values) => {

@@ -3,6 +3,7 @@ query Post($id: Int!) {
     id
     createdAt
     updatedAt
+    isHidden
     title
     text
     points

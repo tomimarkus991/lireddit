@@ -161,7 +161,6 @@ let PostResolver = class PostResolver {
                 return { errors };
             }
             let post = Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
-            console.log("post post post post post post post post post", post);
             return { post };
         });
     }
@@ -192,6 +191,21 @@ let PostResolver = class PostResolver {
             yield Upvote_1.Upvote.delete({ postId: id });
             yield Post_1.Post.delete({ id, creatorId: req.session.userId });
             return true;
+        });
+    }
+    hidePost(id, isHidden, { req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield typeorm_1.getConnection()
+                .createQueryBuilder()
+                .update(Post_1.Post)
+                .set({ isHidden: !isHidden })
+                .where('id = :id and "creatorId" = :creatorId', {
+                id,
+                creatorId: req.session.userId,
+            })
+                .returning("*")
+                .execute();
+            return post.raw[0];
         });
     }
 };
@@ -272,6 +286,16 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "deletePost", null);
+__decorate([
+    type_graphql_1.Mutation(() => Post_1.Post, { nullable: true }),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
+    __param(0, type_graphql_1.Arg("id", () => type_graphql_1.Int)),
+    __param(1, type_graphql_1.Arg("isHidden")),
+    __param(2, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Boolean, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "hidePost", null);
 PostResolver = __decorate([
     type_graphql_1.Resolver(Post_1.Post)
 ], PostResolver);

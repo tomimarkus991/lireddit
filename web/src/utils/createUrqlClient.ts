@@ -86,7 +86,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   }
 
   return {
-    url: "http://localhost:5000/graphql",
+    url: process.env.NEXT_PUBLIC_API_URL as string,
     fetchOptions: {
       credentials: "include" as const,
       headers: cookie
@@ -108,13 +108,13 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
         },
         updates: {
           Mutation: {
-            deletePost: (_result, args, cache, info) => {
+            deletePost: (_result, args, cache, _) => {
               cache.invalidate({
                 __typename: "Post",
                 id: (args as DeletePostMutationVariables).id,
               });
             },
-            vote: (_result, args, cache, info) => {
+            vote: (_result, args, cache, _) => {
               const {
                 postId,
                 value,
@@ -169,10 +169,10 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 );
               }
             },
-            createPost: (_result, args, cache, info) => {
+            createPost: (_result, _1, cache, _) => {
               invalidateAllPosts(cache);
             },
-            logout: (_result, args, cache, info) => {
+            logout: (_result, _1, cache, _) => {
               betterUpdateQuery<LogoutMutation, MeQuery>(
                 cache,
                 { query: MeDocument },
@@ -181,7 +181,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               );
               // invalidateAllPosts(cache);
             },
-            login: (_result, args, cache, info) => {
+            login: (_result, _1, cache, _) => {
               betterUpdateQuery<LoginMutation, MeQuery>(
                 cache,
                 { query: MeDocument },
@@ -196,7 +196,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               );
               invalidateAllPosts(cache);
             },
-            register: (_result, args, cache, info) => {
+            register: (_result, _1, cache, _) => {
               betterUpdateQuery<RegisterMutation, MeQuery>(
                 cache,
                 { query: MeDocument },

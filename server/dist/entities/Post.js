@@ -15,6 +15,10 @@ const typeorm_1 = require("typeorm");
 const Upvote_1 = require("./Upvote");
 const User_1 = require("./User");
 let Post = class Post extends typeorm_1.BaseEntity {
+    constructor() {
+        super(...arguments);
+        this.isHidden = false;
+    }
 };
 __decorate([
     type_graphql_1.Field(),
@@ -54,6 +58,11 @@ __decorate([
     typeorm_1.OneToMany(() => Upvote_1.Upvote, (upvote) => upvote.post),
     __metadata("design:type", Array)
 ], Post.prototype, "upvotes", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    typeorm_1.Column(),
+    __metadata("design:type", Boolean)
+], Post.prototype, "isHidden", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),

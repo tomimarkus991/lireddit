@@ -6,8 +6,6 @@ import { useRouter } from "next/router";
 import React from "react";
 import { InputField } from "../components/InputField";
 import Layout from "../components/Layout";
-import { RegisterModal } from "../components/RegisterModal";
-import { Wrapper } from "../components/Wrapper";
 import { useLoginMutation } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMap } from "../utils/toErrorMap";

@@ -1,10 +1,8 @@
 import {
   Box,
   Button,
-  Collapse,
   Flex,
   Heading,
-  Icon,
   IconButton,
   Link,
   Menu,
@@ -17,14 +15,14 @@ import {
 } from "@chakra-ui/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import { FaPlus, FaUser } from "react-icons/fa";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import ColorMode from "./ColorMode";
-import { FaPlus, FaUser } from "react-icons/fa";
 import { LoginModal } from "./LoginModal";
 import { RegisterModal } from "./RegisterModal";
-import { useRouter } from "next/router";
 
 interface NavBarProps {}
 

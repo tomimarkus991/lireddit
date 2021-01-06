@@ -1,6 +1,6 @@
-import { FaSun, FaMoon } from "react-icons/fa";
 import { IconButton, useColorMode } from "@chakra-ui/react";
 import React from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 interface ColorModeProps {
   buttonSize: string;

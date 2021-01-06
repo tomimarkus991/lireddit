@@ -16,6 +16,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import {
   PostSnippetFragment,
   useDeletePostMutation,
+  // useHidePostMutation,
   useMeQuery,
 } from "../../generated/graphql";
 
@@ -27,6 +28,7 @@ export const BottomPostSection: React.FC<BottomPostSectionProps> = ({
   post,
 }) => {
   const [, deletePost] = useDeletePostMutation();
+  // const [, hidePost] = useHidePostMutation();
   const [{ data: meData }] = useMeQuery();
   return (
     <Flex>
@@ -40,6 +42,16 @@ export const BottomPostSection: React.FC<BottomPostSectionProps> = ({
         <MenuList>
           {meData?.me?.id === post.creator.id ? (
             <>
+              {/* <MenuItem
+                onClick={() => {
+                  hidePost({ id: post.id, isHidden: post.isHidden });
+                }}
+              >
+                <Flex direction="row" w="100%" align="center">
+                  <Icon as={FaAmazon} w={6} h={6} color="red.500" mr="2" />
+                  <Text mr="2">Hide</Text>
+                </Flex>
+              </MenuItem> */}
               <MenuItem
                 onClick={() => {
                   deletePost({ id: post.id });

@@ -5,7 +5,11 @@ body {
   background-color: "#18191A";
 }
 
-.text {
+.text-small {
+  max-height: 200px;
+}
+
+.text-large {
   max-height: 200px;
   mask-image: linear-gradient(180deg, #000 60%, transparent);
 }
