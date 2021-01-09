@@ -23,11 +23,11 @@ export const Posts: React.FC = () => {
         <Stack spacing={2}>
           {data!.posts.posts.map(
             (post, index) => {
-              if (post && post.isHidden === false) {
-                return <Post post={post} key={index} />;
-              } else {
-                return null;
-              }
+              // if (post && post.isHidden === false) {
+              return <Post post={post} key={index} />;
+              // } else {
+              // return null;
+              // }
             }
 
             // post ? return <Post post={post} key={index} /> : null

@@ -39,11 +39,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         type: "postgres",
         url: process.env.DATABASE_URL,
         logging: true,
+        synchronize: true,
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
         entities: [Post_1.Post, User_1.User, Upvote_1.Upvote, Comment_1.Comment, SubReddit_1.SubReddit],
     };
     try {
-        yield typeorm_1.createConnection(Object.assign({}, config));
+        const connection = yield typeorm_1.createConnection(Object.assign({}, config));
     }
     catch (error) {
         console.log("Error while connecting to the database", error);

@@ -1,6 +1,6 @@
-mutation HidePost($id: Int!, $isHidden: Boolean!) {
-  hidePost(id: $id, isHidden: $isHidden) {
-    id
-    isHidden
-  }
-}
+# mutation HidePost($id: Int!, $isHidden: Boolean!) {
+#   hidePost(id: $id, isHidden: $isHidden) {
+#     id
+#     isHidden
+#   }
+# }
