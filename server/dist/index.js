@@ -39,7 +39,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         type: "postgres",
         url: process.env.DATABASE_URL,
         logging: true,
-        synchronize: true,
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
         entities: [Post_1.Post, User_1.User, Upvote_1.Upvote, Comment_1.Comment, SubReddit_1.SubReddit],
     };
@@ -53,7 +52,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redis = new ioredis_1.default(process.env.REDIS_URL);
-    app.set("proxy", 1);
+    app.set("trust proxy", 1);
     app.use(cors_1.default({
         origin: process.env.CORS_ORIGIN,
         credentials: true,
@@ -69,7 +68,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             httpOnly: true,
             sameSite: "lax",
             secure: constants_1.__prod__,
-            domain: undefined,
+            domain: constants_1.__prod__ ? ".codesendace.com" : undefined,
         },
         saveUninitialized: false,
         secret: process.env.SESSION_SECRET,
