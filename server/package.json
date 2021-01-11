@@ -10,6 +10,7 @@
     "start": "node dist/index.js",
     "start2": "ts-node src/index.ts",
     "cm": "npx typeorm migration:create -n FakePosts -d src/migrations",
+    "initial": "npx typeorm migration:generate -n Initial -d src/migrations",
     "test": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "gene": "gen-env-types .env -o src/env.d.ts -e ."
   },

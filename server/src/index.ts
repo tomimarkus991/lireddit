@@ -26,14 +26,14 @@ const main = async () => {
     type: "postgres",
     url: process.env.DATABASE_URL,
     logging: true,
-    synchronize: true,
+    // synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Upvote, Comment, SubReddit],
   };
   try {
-    const conn = await createConnection({ ...config });
+    await createConnection({ ...config });
     // await Post.delete({});
-    await conn.runMigrations();
+    // await conn.runMigrations();
   } catch (error) {
     console.log("Error while connecting to the database", error);
     return error;
