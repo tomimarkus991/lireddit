@@ -17,9 +17,9 @@ import { Post } from "../entities/Post";
 import { Upvote } from "../entities/Upvote";
 import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
-import { PostInput } from "./PostInput";
-import { validateCreatePost } from "../utils/validateCreatePost";
 import { FieldError } from "../utils/FieldError";
+import { validateCreatePost } from "../utils/validateCreatePost";
+import { PostInput } from "./PostInput";
 
 @ObjectType()
 class PostResponse {
@@ -255,24 +255,24 @@ export class PostResolver {
   }
 
   // Hide Post
-  @Mutation(() => Post, { nullable: true })
-  @UseMiddleware(isAuth)
-  async hidePost(
-    @Arg("id", () => Int) id: number,
-    @Arg("isHidden") isHidden: boolean,
-    @Ctx() { req }: MyContext
-  ): Promise<Post | null> {
-    // const oldPost = await this.post(id);
-    const post = await getConnection()
-      .createQueryBuilder()
-      .update(Post)
-      .set({ isHidden: !isHidden })
-      .where('id = :id and "creatorId" = :creatorId', {
-        id,
-        creatorId: req.session.userId,
-      })
-      .returning("*")
-      .execute();
-    return post.raw[0];
-  }
+  //   @Mutation(() => Post, { nullable: true })
+  //   @UseMiddleware(isAuth)
+  //   async hidePost(
+  //     @Arg("id", () => Int) id: number,
+  //     @Arg("isHidden") isHidden: boolean,
+  //     @Ctx() { req }: MyContext
+  //   ): Promise<Post | null> {
+  //     // const oldPost = await this.post(id);
+  //     const post = await getConnection()
+  //       .createQueryBuilder()
+  //       .update(Post)
+  //       .set({ isHidden: !isHidden })
+  //       .where('id = :id and "creatorId" = :creatorId', {
+  //         id,
+  //         creatorId: req.session.userId,
+  //       })
+  //       .returning("*")
+  //       .execute();
+  //     return post.raw[0];
+  //   }
 }

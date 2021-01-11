@@ -27,9 +27,9 @@ interface BottomPostSectionProps {
 export const BottomPostSection: React.FC<BottomPostSectionProps> = ({
   post,
 }) => {
-  const [, deletePost] = useDeletePostMutation();
+  const [deletePost] = useDeletePostMutation();
   // const [, hidePost] = useHidePostMutation();
-  const [{ data: meData }] = useMeQuery();
+  const { data: meData } = useMeQuery();
   return (
     <Flex>
       <Box mr="2">
@@ -54,7 +54,12 @@ export const BottomPostSection: React.FC<BottomPostSectionProps> = ({
               </MenuItem> */}
               <MenuItem
                 onClick={() => {
-                  deletePost({ id: post.id });
+                  deletePost({
+                    variables: { id: post.id },
+                    update: (cache) => {
+                      cache.evict({ id: "Post:" + post.id });
+                    },
+                  });
                 }}
               >
                 <Flex direction="row" w="100%" align="center">

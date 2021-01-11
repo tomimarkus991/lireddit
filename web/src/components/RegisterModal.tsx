@@ -16,7 +16,7 @@ import { useRouter } from "next/dist/client/router";
 import NextLink from "next/link";
 import React from "react";
 import { InputField } from "../components/InputField";
-import { useRegisterMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 interface RegisterModalProps {
   text: string;
@@ -24,11 +24,9 @@ interface RegisterModalProps {
 export const RegisterModal: React.FC<RegisterModalProps> = ({ text }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
-  const [, register] = useRegisterMutation();
+  const [register] = useRegisterMutation();
   const registerLink = useColorModeValue("pink.500", "cyan.500");
-  // console.log("isOpen RegisterModal", isOpen);
-  // console.log("onOpen RegisterModal", onOpen);
-  // console.log("onClose RegisterModal", onClose);
+
   return (
     <>
       <Button onClick={onOpen} mr="3">
@@ -49,7 +47,18 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({ text }) => {
             <Formik
               initialValues={{ username: "", email: "", password: "" }}
               onSubmit={async (values, { setErrors }) => {
-                const response = await register({ input: values });
+                const response = await register({
+                  variables: { input: values },
+                  update: (cache, { data }) => {
+                    cache.writeQuery<MeQuery>({
+                      query: MeDocument,
+                      data: {
+                        __typename: "Query",
+                        me: data?.register.user,
+                      },
+                    });
+                  },
+                });
                 if (response.data?.register.errors) {
                   setErrors(toErrorMap(response.data.register.errors));
                 } else if (response.data?.register.user) {

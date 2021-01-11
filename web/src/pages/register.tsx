@@ -1,29 +1,38 @@
 import { Box, Button, Link, useColorModeValue } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/dist/client/router";
 import NextLink from "next/link";
 import React from "react";
 import { InputField } from "../components/InputField";
 import Layout from "../components/Layout";
-import { useRegisterMutation } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
+import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
+import { withApollo } from "../utils/withApollo";
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  const [, register] = useRegisterMutation();
+  const [register] = useRegisterMutation();
   const signUpLink = useColorModeValue("pink.500", "cyan.500");
   return (
     <>
-      {/* <NavBar /> */}
       <Layout variant="small">
         <Formik
           initialValues={{ username: "", email: "", password: "" }}
           onSubmit={async (values, { setErrors }) => {
-            const response = await register({ input: values });
+            const response = await register({
+              variables: { input: values },
+              update: (cache, { data }) => {
+                cache.writeQuery<MeQuery>({
+                  query: MeDocument,
+                  data: {
+                    __typename: "Query",
+                    me: data?.register.user,
+                  },
+                });
+              },
+            });
             if (response.data?.register.errors) {
               setErrors(toErrorMap(response.data.register.errors));
             } else if (response.data?.register.user) {
@@ -67,4 +76,4 @@ const Register: React.FC<registerProps> = ({}) => {
     </>
   );
 };
-export default withUrqlClient(createUrqlClient)(Register);
+export default withApollo({ ssr: false })(Register);

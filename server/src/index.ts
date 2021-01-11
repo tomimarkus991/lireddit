@@ -31,9 +31,9 @@ const main = async () => {
     entities: [Post, User, Upvote, Comment, SubReddit],
   };
   try {
-    const connection = await createConnection({ ...config });
+    const conn = await createConnection({ ...config });
     // await Post.delete({});
-    // await connection.runMigrations();
+    await conn.runMigrations();
   } catch (error) {
     console.log("Error while connecting to the database", error);
     return error;

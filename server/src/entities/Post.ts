@@ -45,10 +45,6 @@ export class Post extends BaseEntity {
   @OneToMany(() => Upvote, (upvote) => upvote.post)
   upvotes: Upvote[];
 
-  // @Field()
-  // @Column()
-  // isHidden: boolean = false;
-
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

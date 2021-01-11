@@ -1,3 +1,4 @@
+import { useApolloClient } from "@apollo/client";
 import {
   Box,
   Button,
@@ -15,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 import NextImage from "next/image";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { FaPlus, FaUser } from "react-icons/fa";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
@@ -27,18 +27,20 @@ import { RegisterModal } from "./RegisterModal";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const router = useRouter();
+  // const router = useRouter();
 
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery({ pause: isServer() });
+  const [logout, { loading: logoutFetching }] = useLogoutMutation();
+
+  const apolloClient = useApolloClient();
+
+  const { data, loading } = useMeQuery({ skip: isServer() });
 
   const bgColor = useColorModeValue("#F7FAFC", "#2D3748");
   // const color = useColorModeValue("#242526", "#E4E6EB");
-  let body;
+  let body = null;
 
   // data is loading
-  if (fetching) {
-    body = null;
+  if (loading) {
   }
 
   // user not logged in
@@ -133,7 +135,7 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
                   <MenuItem
                     onClick={async () => {
                       await logout();
-                      router.reload();
+                      apolloClient.resetStore();
                     }}
                     isLoading={logoutFetching}
                   >

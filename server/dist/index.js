@@ -44,7 +44,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         entities: [Post_1.Post, User_1.User, Upvote_1.Upvote, Comment_1.Comment, SubReddit_1.SubReddit],
     };
     try {
-        const connection = yield typeorm_1.createConnection(Object.assign({}, config));
+        const conn = yield typeorm_1.createConnection(Object.assign({}, config));
+        yield conn.runMigrations();
     }
     catch (error) {
         console.log("Error while connecting to the database", error);

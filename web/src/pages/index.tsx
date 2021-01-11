@@ -1,7 +1,6 @@
-import { withUrqlClient } from "next-urql";
 import React from "react";
 import { Posts } from "../components/Posts";
-import { createUrqlClient } from "../utils/createUrqlClient";
+import { withApollo } from "../utils/withApollo";
 
 const Index = () => {
   return (
@@ -10,4 +9,4 @@ const Index = () => {
     </>
   );
 };
-export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
+export default withApollo({ ssr: true })(Index);

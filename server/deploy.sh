@@ -1,4 +1,7 @@
 #!/bin/bash
+#muuda current V: 1.0.1
+# muuda andmebaas lireddit6 -eks
+#
 
 echo What should the version be?
 read version
